@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'drf_spectacular',
     'tasks'
 ]
 
@@ -123,11 +124,23 @@ STATIC_URL = 'static/'
 CORS_ALLOWED_ORIGINS = ['http://localhost:5137']
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication'
-    ),
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated' # Esto fuerza que todos los endpoints requieran autenticación
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Tu API de TodoList',
+    'DESCRIPTION': 'API para gestionar tareas y usuarios',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # Opcional: personalizar el nombre de la cookie de JWT si usas autenticación en Swagger
+    'SWAGGER_UI_SETTINGS': {
+        'persistAuthorization': True,  # para mantener el token al recargar
+    },
 }

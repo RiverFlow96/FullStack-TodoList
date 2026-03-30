@@ -22,6 +22,7 @@ from rest_framework_simplejwt.views import (
 )
 from rest_framework.routers import DefaultRouter
 from tasks.views import TaskViewSet
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView 
 
 router = DefaultRouter()
 router.register(r'tasks', TaskViewSet, basename='task')
@@ -31,5 +32,14 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # Documentacion
+    # OpenAPI
+    path('api/schema/', SpectacularAPIView.as_view(), name="schema"),
+    # Swagger UI
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    # ReDoc
+    path('api/redoc/', SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    
 ]
