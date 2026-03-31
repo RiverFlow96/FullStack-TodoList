@@ -1,21 +1,46 @@
 import { Link } from "react-router-dom"
 import { LoginInputs } from "../components/LoginInputs"
 import { User, Lock, Mail } from "lucide-react"
+import { toast } from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from '../utils/schema'
 
 export default function RegisterLayout() {
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            username: '',
+            email: ''
+        }
+    })
+
+    const onSubmit = (data) => {
+        console.log("OK!")
+        console.log(data)
+    }
+
     return (
         <div className="w-full max-w-md md:max-w-lg bg-white p-4 sm:p-6 md:p-8 flex flex-col text-center rounded-2xl sm:rounded-3xl text-base sm:text-lg shadow-xl sm:shadow-2xl mx-auto">
             <h1 className="font-bold text-2xl sm:text-3xl w-full">Register</h1>
             <span className="font-bold text-black/40 text-xs sm:text-sm">Your have an account? {<Link to={'/auth/login'} className="text-blue-600">login</Link>}</span>
             <hr className="my-4 sm:my-5" />
-            <form className="w-full h-full px-1 sm:px-3 md:px-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full h-full px-1 sm:px-3 md:px-6">
                 {/* Username - Input */}
-                <LoginInputs placeholder={`username`} type={"text"} icon={<User className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />} />
+                <LoginInputs {...register("username")} placeholder={`username`} type={"text"} icon={<User className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />} />
+                {errors.username && <span className="text-red-500 text-sm">{errors.username.message}</span>}
                 {/* Password - Input */}
                 <LoginInputs placeholder={"password"} type={"password"} icon={<Lock className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />} />
+                {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
                 <LoginInputs placeholder={"password"} type={"password"} icon={<Lock className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />} />
+                {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword.message}</span>}
                 {/* Email - Input */}
-                <LoginInputs placeholder={"example@email.com"} type={"email"} icon={<Mail className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />} />
+                <LoginInputs {...register("email")} placeholder={"example@email.com"} type={"email"} icon={<Mail className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />} />
                 <button type="submit" className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors">Register</button>
                 <button className="border-2 w-full mb-2 rounded-lg h-10 sm:h-11 text-black font-bold hover:shadow-md hover:shadow-black hover:bg-gray-200 hover:text-black/80 transition-colors">Google</button>
             </form>
