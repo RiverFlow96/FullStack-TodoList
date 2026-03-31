@@ -1,12 +1,19 @@
-import { LoginForm, TaskList, RegisterForm } from "./pages/Tasks";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
 
   return (
     <>
-      <LoginForm></LoginForm>
-      <RegisterForm></RegisterForm>
-      <TaskList></TaskList>
+      <BrowserRouter>
+        <Routes>
+          {/* <Route path="/" element={<Home />} />
+          <Route path="/tasks:id" element={<Tasks />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/register" element={<Register />} /> */}
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
