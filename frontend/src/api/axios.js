@@ -5,6 +5,17 @@ export const api = axios.create({
     timeout: 10000,
 })
 
+// Instancia sin autenticación para registro y login
+export const publicApi = axios.create({
+    baseURL: 'http://localhost:8000/api/',
+    timeout: 10000,
+})
+
+export const auth = axios.create({
+    baseURL: 'http://localhost:8000/api-auth/',
+    timeout: 10000,
+})
+
 // Flag para controlar si ya se está refrescando el token
 let isRefreshing = false;
 let failedQueue = [];
@@ -18,7 +29,7 @@ const processQueue = (error, token = null) => {
             prom.resolve(token)
         }
     })
-    
+
     isRefreshing = false;
     failedQueue = [];
 }
@@ -58,7 +69,7 @@ api.interceptors.response.use(
 
             try {
                 const refreshToken = localStorage.getItem('refresh_token')
-                
+
                 if (!refreshToken) {
                     // Sin refresh token, hacer logout
                     logout()
@@ -145,12 +156,26 @@ export const deleteTask = async (taskId) => {
 
 export const register = async (userData) => {
     try {
-        const response = await api.post('users/', {
+        // Usar publicApi para el registro (sin requerir autenticación)
+        const response = await publicApi.post('users/', {
             username: userData.username,
             email: userData.email,
             password: userData.password
         })
-        return response.data
+        // Auto-login después del registro
+        const resLogin = await publicApi.post('token/', {
+            username: userData.username,
+            password: userData.password
+        })
+        // Guardar tokens en localStorage
+        if (resLogin.data.access) {
+            localStorage.setItem('access_token', resLogin.data.access)
+            localStorage.setItem('refresh_token', resLogin.data.refresh)
+        }
+        return {
+            user: response.data,
+            tokens: resLogin.data
+        }
     } catch (error) {
         console.error("Error registering user: ", error)
         throw error
