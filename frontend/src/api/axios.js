@@ -1,5 +1,29 @@
 import axios from "axios";
 
+export const api = axios.create({
+    baseURL: 'http://localhost:8000/api/',
+    timeout: 10000,
+})
+
+// Flag para controlar si ya se está refrescando el token
+let isRefreshing = false;
+let failedQueue = [];
+
+// Procesar peticiones en cola
+const processQueue = (error, token = null) => {
+    failedQueue.forEach(prom => {
+        if (error) {
+            prom.reject(error)
+        } else {
+            prom.resolve(token)
+        }
+    })
+    
+    isRefreshing = false;
+    failedQueue = [];
+}
+
+// Interceptor de REQUEST: añade el token a cada petición
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('access_token')
@@ -11,10 +35,67 @@ api.interceptors.request.use(
     (error) => Promise.reject(error)
 )
 
-export const api = axios.create({
-    baseURL: 'http://localhost:8000/api/',
-    timeout: 10000,
-})
+// Interceptor de RESPONSE: maneja errores 401 y refresca el token
+api.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        const originalRequest = error.config;
+
+        // Si el error es 401 y no es una petición de refresco
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            // Si ya estamos refrescando, añade a la cola
+            if (isRefreshing) {
+                return new Promise((resolve, reject) => {
+                    failedQueue.push({ resolve, reject })
+                }).then(token => {
+                    originalRequest.headers.Authorization = `Bearer ${token}`
+                    return api(originalRequest)
+                })
+            }
+
+            originalRequest._retry = true;
+            isRefreshing = true;
+
+            try {
+                const refreshToken = localStorage.getItem('refresh_token')
+                
+                if (!refreshToken) {
+                    // Sin refresh token, hacer logout
+                    logout()
+                    processQueue(new Error('No refresh token'), null)
+                    return Promise.reject(error)
+                }
+
+                // Refrescar el token
+                const response = await axios.post(
+                    'http://localhost:8000/api/token/refresh/',
+                    { refresh: refreshToken },
+                    { timeout: 10000 }
+                )
+
+                const { access } = response.data
+                localStorage.setItem('access_token', access)
+
+                // Actualizar header de la petición original
+                originalRequest.headers.Authorization = `Bearer ${access}`
+
+                // Procesar peticiones en cola
+                processQueue(null, access)
+
+                // Reintentar petición original
+                return api(originalRequest)
+
+            } catch (refreshError) {
+                // Error refrescando token
+                logout()
+                processQueue(refreshError, null)
+                return Promise.reject(refreshError)
+            }
+        }
+
+        return Promise.reject(error)
+    }
+)
 
 export const fetchTasks = async () => {
     try {
@@ -93,5 +174,6 @@ export const login = async (username, password) => {
 export const logout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    // Opcionalmente: redirigir a login o limpiar estado global
 };
 
