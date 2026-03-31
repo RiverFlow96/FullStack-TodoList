@@ -11,7 +11,8 @@ function App() {
           <Route path="/tasks:id" element={<Tasks />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/register" element={<Register />} /> */}
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/auth:login" element={<LoginPage />} />
+          <Route path="/auth:register" element={<LoginPage />} />
         </Routes>
       </BrowserRouter>
     </>
