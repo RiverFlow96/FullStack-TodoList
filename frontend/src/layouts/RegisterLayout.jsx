@@ -5,10 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from '../utils/schema'
 import { useEffect } from "react";
-import { register as registerUser } from "../api/axios";
+import { useAuthStore } from "../store/useStore";
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterLayout() {
+
+    const { registerUser } = useAuthStore()
 
     const navigate = useNavigate()
 
@@ -23,10 +25,10 @@ export default function RegisterLayout() {
     const onSubmit = async (data) => {
         const userData = {
             username: data.username,
-            email: data.email,
-            password: data.password
+            password: data.password,
+            email: data.email
         }
-        await registerUser(userData)
+        await registerUser(userData.username, userData.password, userData.email)
         navigate("/auth/login")
     }
 

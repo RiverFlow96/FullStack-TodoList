@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { createTask, fetchTasks, updateTask, deleteTask, logout } from "../api/axios";
 import { login as apiLogin, logout as apiLogout, register as apiRegister } from "../api/axios";
+import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
     user: null,
@@ -34,9 +35,15 @@ export const useAuthStore = create((set) => ({
             error: null
         })
     },
-    register: async (username, password, email) => {
+    registerUser: async (username, password, email) => {
         try {
             const data = await apiRegister({ username, password, email })
+            console.log({
+                user: { username },
+                isLoggedIn: true,
+                token: data.tokens.access,
+                error: null
+            })
             set({
                 user: { username },
                 isLoggedIn: true,

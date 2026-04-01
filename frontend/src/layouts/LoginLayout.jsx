@@ -4,12 +4,13 @@ import { } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../utils/schema";
 import { useForm } from "react-hook-form";
-import { login } from "../api/axios";
+import { useAuthStore } from "../store/useStore";
 import { toast } from "react-hot-toast";
 
 export default function LoginLayout() {
 
     const navigate = useNavigate()
+    const { login } = useAuthStore()
 
     const {
         register,
@@ -22,6 +23,8 @@ export default function LoginLayout() {
     const submit = (data) => {
         toast.success("Succefully")
         login(data.username, data.password)
+        useAuthStore.login
+        console.log(useAuthStore.user)
         navigate("/home/")
     }
 
