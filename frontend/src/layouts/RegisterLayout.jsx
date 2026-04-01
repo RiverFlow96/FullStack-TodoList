@@ -1,12 +1,16 @@
 import { Link } from "react-router-dom"
-import { LoginInputs } from "../components/LoginInputs"
 import { User, Lock, Mail } from "lucide-react"
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from '../utils/schema'
+import { useEffect } from "react";
+import { register as registerUser } from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterLayout() {
+
+    const navigate = useNavigate()
 
     const {
         register,
@@ -16,9 +20,14 @@ export default function RegisterLayout() {
         resolver: zodResolver(registerSchema),
     })
 
-    const onSubmit = (data) => {
-        toast.success("User Registered")
-        console.log(data)
+    const onSubmit = async (data) => {
+        const userData = {
+            username: data.username,
+            email: data.email,
+            password: data.password
+        }
+        await registerUser(userData)
+        navigate("/auth/login")
     }
 
     return (

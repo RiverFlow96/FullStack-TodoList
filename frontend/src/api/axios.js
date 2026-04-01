@@ -172,6 +172,7 @@ export const register = async (userData) => {
             localStorage.setItem('access_token', resLogin.data.access)
             localStorage.setItem('refresh_token', resLogin.data.refresh)
         }
+        console.log("Succefully")
         return {
             user: response.data,
             tokens: resLogin.data
