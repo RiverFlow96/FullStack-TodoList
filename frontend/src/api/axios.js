@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export const api = axios.create({
     baseURL: 'http://localhost:8000/api/',
@@ -172,13 +173,13 @@ export const register = async (userData) => {
             localStorage.setItem('access_token', resLogin.data.access)
             localStorage.setItem('refresh_token', resLogin.data.refresh)
         }
-        console.log("Succefully")
+        toast.success("Succefully")
         return {
             user: response.data,
             tokens: resLogin.data
         }
     } catch (error) {
-        console.error("Error registering user: ", error)
+        toast.error("Error registering user: ", error)
         throw error
     }
 }
@@ -190,9 +191,11 @@ export const login = async (username, password) => {
             localStorage.setItem('access_token', response.data.access)
             localStorage.setItem('refresh_token', response.data.refresh)
         }
+        toast.success("Succefully")
+        console.log("Succefully")
         return response.data
     } catch (error) {
-        console.error('Error login: ', error)
+        toast.error('Error login: ', error)
         throw error
     }
 }
