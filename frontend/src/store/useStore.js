@@ -17,6 +17,7 @@ export const useAuthStore = create((set) => ({
                 token: data.access,
                 error: null
             })
+            return true
         } catch (err) {
             set({
                 user: null,
@@ -24,9 +25,10 @@ export const useAuthStore = create((set) => ({
                 token: null,
                 error: `Usuario y contrasenias incorrectos ${err}`
             })
+            return false
         }
     },
-    logout: async () => {
+    logout: () => {
         apiLogout()
         set({
             user: null,

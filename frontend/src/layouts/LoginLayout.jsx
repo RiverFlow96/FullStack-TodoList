@@ -20,12 +20,11 @@ export default function LoginLayout() {
         resolver: zodResolver(loginSchema)
     })
 
-    const submit = (data) => {
-        toast.success("Succefully")
-        login(data.username, data.password)
-        useAuthStore.login
-        console.log(useAuthStore.user)
-        navigate("/home/")
+    const submit = async (data) => {
+        const success = await login(data.username, data.password)
+        if (success) {
+            navigate("/home/")
+        }
     }
 
     return (
