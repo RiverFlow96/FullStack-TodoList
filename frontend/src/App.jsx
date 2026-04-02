@@ -5,14 +5,15 @@ import { HomePage } from "./pages/HomePage";
 import LoginLayout from "./layouts/LoginLayout";
 import RegisterLayout from "./layouts/RegisterLayout";
 import { TaskLayout } from "./layouts/TaskLayout";
+import ProfilePage from "./pages/ProfilePage";
 
 function ProtectedRoute({ children }) {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
-  
+
   if (!isLoggedIn) {
     return <Navigate to="/auth/login" replace />
   }
-  
+
   return children
 }
 
@@ -24,7 +25,7 @@ function App() {
         <Routes>
           {/* Redirect root to home */}
           <Route path="/" element={<Navigate to="/home" replace />} />
-          
+
           {/* Protected routes */}
           <Route path="/home" element={
             <ProtectedRoute>
@@ -33,7 +34,9 @@ function App() {
           }>
             <Route index="true" element={<TaskLayout />} />
           </Route>
-          
+
+          <Route path="/profile" element={<ProtectedRoute>{<ProfilePage />}</ProtectedRoute>} />
+
           {/* Public routes - Auth */}
           <Route path="/auth" element={<AuthPage />}>
             <Route path="login" element={<LoginLayout />} />
