@@ -10,9 +10,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function RegisterLayout() {
 
-    const { registerUser } = useAuthStore()
-
+    const { registerUser, isLoggedIn } = useAuthStore()
     const navigate = useNavigate()
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate("/home", { replace: true })
+        }
+    }, [isLoggedIn, navigate])
 
     const {
         register,
@@ -29,7 +34,7 @@ export default function RegisterLayout() {
             email: data.email
         }
         await registerUser(userData.username, userData.password, userData.email)
-        navigate("/auth/login")
+        navigate("/home", { replace: true })
     }
 
     return (
