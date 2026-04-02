@@ -11,12 +11,6 @@ export default function LoginLayout() {
     const navigate = useNavigate()
     const { login, isLoggedIn } = useAuthStore()
 
-    useEffect(() => {
-        if (isLoggedIn) {
-            navigate("/home", { replace: true })
-        }
-    }, [isLoggedIn, navigate])
-
     const {
         register,
         handleSubmit,
