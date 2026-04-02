@@ -118,6 +118,15 @@ export const fetchTasks = async () => {
     }
 }
 
+export const fetchTask = async (id) => {
+    try {
+        const response = await api.get(`tasks/${id}/`)
+        return response.data
+    } catch (error) {
+        console.error('Error fetching tasks: ', error)
+    }
+}
+
 export const createTask = async (taskData) => {
     try {
         const response = await api.post('tasks/', {
@@ -133,7 +142,7 @@ export const createTask = async (taskData) => {
 
 export const updateTask = async (taskData, taskId) => {
     try {
-        const response = await api.put(`tasks/${taskId}`, {
+        const response = await api.patch(`tasks/${taskId}/`, {
             title: taskData.title,
             description: taskData.description,
             completed: taskData.completed
@@ -191,7 +200,6 @@ export const login = async (username, password) => {
             localStorage.setItem('refresh_token', response.data.refresh)
         }
         toast.success("Succefully")
-        console.log("Succefully")
         return response.data
     } catch (error) {
         toast.error('Error login: ', error)

@@ -6,6 +6,7 @@ export function HomePage() {
     return (
         <div className="">
             <NavbarLayout />
+            <div className="px-4 py-3 h-16 bg-amber-50"></div>
             <div className="w-full">
                 <Outlet />
             </div>

@@ -40,12 +40,6 @@ export const useAuthStore = create((set) => ({
     registerUser: async (username, password, email) => {
         try {
             const data = await apiRegister({ username, password, email })
-            console.log({
-                user: { username },
-                isLoggedIn: true,
-                token: data.tokens.access,
-                error: null
-            })
             set({
                 user: { username },
                 isLoggedIn: true,
@@ -68,6 +62,15 @@ export const useTaskStore = create((set, get) => ({
     tasks: [],
     loading: false,
     error: null,
+    sort_by: "created_at",
+    order_by: "desc",
+    filter_by: "all",
+    search_query: "",
+
+    setSorterBy: (value) => set(() => ({ sort_by: value })),
+    setOrderBy: (value) => set(() => ({ order_by: value })),
+    setFilterBy: (value) => set(() => ({ filter_by: value })),
+    setSearchQuery: (value) => set(() => ({ search_query: value })),
 
     fetchTasks: async () => {
         set({ loading: true, error: null })
@@ -89,16 +92,12 @@ export const useTaskStore = create((set, get) => ({
         }
     },
 
-    editTask: async (id, updates) => {
-        set({ loading: true, error: null })
+    editTask: async (updates, id) => {
         try {
             const updated = await updateTask(updates, id)
-            set({
-                tasks: get().tasks.map(t => t.id === id ? updated : t),
-                loading: false
-            })
+            set({ tasks: get().tasks.map(t => t.id === id ? updated : t) })
         } catch (err) {
-            set({ error: err.message, loading: false })
+            console.error("Error updating task:", err)
         }
     },
 

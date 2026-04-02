@@ -1,20 +1,32 @@
 import { Circle, CheckCircle2, Calendar } from "lucide-react";
+import { useTaskStore } from "../store/useStore";
 
-function TaskCard({ title, description, completed, created_at, updated_at }) {
+function TaskCard({ title, description, completed, created_at, updated_at, id }) {
+
+    const { editTask } = useTaskStore()
+
     return (
-        <div className="bg-violet-700 w-[30dvw] h-60 flex justify-end rounded-2xl m-10">
-            <div className="bg-purple-100 w-[29dvw] h-60 shadow-2xl p-3 rounded-2xl rounded-l-none flex flex-col">
-                <div className="min-w-full h-auto flex justify-end">
-                    <Circle className="text-violet-700 mx-4" />
-                    <span className="">{completed ? "Completed" : "Uncompleted"}</span>
+        <div className="bg-violet-700 rounded-2xl pl-4 flex justify-end min-h-50">
+            <div className="bg-purple-100 shadow-2xl p-3 rounded-2xl rounded-l-none flex flex-col w-full">
+                <div className="flex items-center justify-between mb-3">
+                    <button
+                        type="button"
+                        className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${completed ? 'bg-violet-600 border-violet-600' : 'border-purple-300 hover:border-violet-400'}`}
+                        onClick={() => editTask({ completed: !completed }, id)}
+                    >
+                        {completed && <CheckCircle2 className="w-4 h-4 text-white" />}
+                    </button>
+                    <span className={`text-sm font-semibold ${completed ? 'text-green-600' : 'text-orange-500'}`}>
+                        {completed ? "Completed" : "Uncompleted"}
+                    </span>
                 </div>
-                <div className="w-full h-[80%]">
-                    <p className="font-bold font-sans text-3xl my-1 text-purple-950">{title}</p>
-                    <p className="font-sans text-xl text-black/60">{description}</p>
+                <div className="grow">
+                    <p className="font-bold font-sans text-xl md:text-2xl my-1 text-purple-950 line-clamp-2">{title}</p>
+                    <p className="font-sans text-base text-black/60 line-clamp-2">{description || "No description"}</p>
                 </div>
-                <div className="flex gap-3">
-                    <Calendar className="text-purple-950" />
-                    <p>{created_at}</p>
+                <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
+                    <Calendar className="w-4 h-4 text-purple-950" />
+                    <p className="truncate">{created_at ? new Date(created_at).toLocaleDateString() : "No date"}</p>
                 </div>
             </div>
         </div>
