@@ -8,6 +8,7 @@ import ProfilePage from "./pages/ProfilePage";
 import { TaskLayout } from "./layouts/TaskLayout";
 import AddTaskPage from "./pages/AddTaskPage";
 import { Toaster } from "react-hot-toast";
+import EditTaskPage from "./pages/EditTaskPage"
 
 function ProtectedLayout() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
@@ -68,7 +69,7 @@ function App() {
             </Route>
             <Route path="profile" element={<ProfilePage />} />
             <Route path="/home/add" element={<AddTaskPage />} />
-            <Route path="/home/add:id" element={<AddTaskPage />} />
+            <Route path="/home/edit/:id" element={<EditTaskPage />} />
           </Route>
 
           {/* Public routes - only for non-logged users */}

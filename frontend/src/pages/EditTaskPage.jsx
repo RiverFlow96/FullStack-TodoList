@@ -1,50 +1,89 @@
 import { Save } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { TaskSchema } from "../utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTaskStore } from "../store/useStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 
 function EditTaskPage() {
 
-    const { addTask, loading: storeLoading } = useTaskStore()
+    const { editTask, loading: storeLoading, tasks, fetchTasks } = useTaskStore()
     const [loading, setLoading] = useState(false)
+    const [taskData, setTaskData] = useState(null)
+    const [loadingTask, setLoadingTask] = useState(true)
+
+    const { id } = useParams()
+
+    useEffect(() => {
+        const loadTask = async () => {
+            if (!tasks || tasks.length === 0) {
+                await fetchTasks()
+            }
+            setLoadingTask(false)
+        }
+        loadTask()
+    }, [])
+
+    useEffect(() => {
+        if (id && tasks.length > 0) {
+            const task = tasks.find(t => t.id === parseInt(id))
+            if (task) {
+                setTaskData(task)
+            } else {
+                toast.error("Task not found")
+            }
+        }
+    }, [id, tasks])
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         resolver: zodResolver(TaskSchema)
     })
 
+    useEffect(() => {
+        if (taskData) {
+            reset({
+                title: taskData.title,
+                description: taskData.description || ""
+            })
+        }
+    }, [taskData, reset])
+
     const navigate = useNavigate()
 
     const onSubmit = async (data) => {
-        console.log("Submit triggered with data:", data)
         setLoading(true)
         try {
-            const success = await addTask({ title: data.title, description: data.description, completed: false })
-            console.log("Success:", success)
-            setLoading(false)
-            if (success) {
-                toast.success("Task created successfully!")
-                reset()
-                navigate("/home")
-            } else {
-                console.error("Failed to create task")
-            }
+            await editTask({
+                title: data.title,
+                description: data.description,
+                completed: taskData?.completed || false
+            }, parseInt(id))
+            toast.success("Task updated successfully!")
+            navigate("/home")
         } catch (error) {
             console.error("Error:", error)
+            toast.error("Error updating task")
+        } finally {
             setLoading(false)
-            console.error("Error creating task")
         }
+    }
+
+    if (loadingTask || !taskData) {
+        return (
+            <div className="w-full min-h-screen flex justify-center items-center bg-violet-100">
+                <Spinner />
+            </div>
+        )
     }
 
     return (
         <div className='w-full min-h-screen flex justify-center items-center bg-violet-100 p-4'>
             <div className='bg-white w-full max-w-lg rounded-3xl shadow-2xl'>
                 <div className='w-full h-20 bg-linear-to-br from-violet-700 to-purple-700 rounded-t-3xl flex items-center justify-center'>
-                    <h1 className='text-3xl text-white font-bold'>Add Task</h1>
+                    <h1 className='text-3xl text-white font-bold'>Edit Task</h1>
                 </div>
 
                 <div className='w-full p-8'>
@@ -89,4 +128,4 @@ function EditTaskPage() {
     )
 }
 
-export default AddTaskPage
+export default EditTaskPage

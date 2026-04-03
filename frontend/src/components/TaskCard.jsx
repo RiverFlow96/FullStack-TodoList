@@ -1,18 +1,27 @@
 import { Circle, CheckCircle2, Calendar } from "lucide-react";
 import { useTaskStore } from "../store/useStore";
+import { useNavigate } from "react-router-dom";
 
 function TaskCard({ title, description, completed, created_at, updated_at, id }) {
 
     const { editTask } = useTaskStore()
+    const navigate = useNavigate()
+
+    const navigateToTask = () => {
+        navigate(`/home/edit/${id}`)
+    }
 
     return (
-        <div className="bg-violet-700 rounded-2xl pl-4 flex justify-end min-h-50">
+        <div className="bg-violet-700 rounded-2xl pl-4 flex justify-end min-h-50 cursor-pointer" onClick={navigateToTask}>
             <div className="bg-purple-100 shadow-2xl p-3 rounded-2xl rounded-l-none flex flex-col w-full">
                 <div className="flex items-center justify-between mb-3">
                     <button
                         type="button"
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${completed ? 'bg-violet-600 border-violet-600' : 'border-purple-300 hover:border-violet-400'}`}
-                        onClick={() => editTask({ completed: !completed }, id)}
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            editTask({ completed: !completed }, id)
+                        }}
                     >
                         {completed && <CheckCircle2 className="w-4 h-4 text-white" />}
                     </button>
