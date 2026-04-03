@@ -5,15 +5,15 @@ import { z } from "zod";
 const getPasswordRequirementsError = (password) => {
     const missingRequirements = []
 
-    if (password.length < 8) missingRequirements.push("mínimo 8 caracteres")
-    if (!/[a-z]/.test(password)) missingRequirements.push("al menos una letra minúscula")
-    if (!/[A-Z]/.test(password)) missingRequirements.push("al menos una letra mayúscula")
-    if (!/[0-9]/.test(password)) missingRequirements.push("al menos un número")
+    if (password.length < 8) missingRequirements.push(" 8 caracteres")
+    if (!/[a-z]/.test(password)) missingRequirements.push("una letra minúscula")
+    if (!/[A-Z]/.test(password)) missingRequirements.push("una letra mayúscula")
+    if (!/[0-9]/.test(password)) missingRequirements.push("un número")
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) missingRequirements.push("al menos un carácter especial")
 
     if (missingRequirements.length === 0) return null
 
-    return `La contrasenia debe contener: ${missingRequirements.join(", ")}.`
+    return `La contrasenia debe contener al menos: ${missingRequirements.join(", ")}.`
 }
 
 export const registerSchema = z.object({
