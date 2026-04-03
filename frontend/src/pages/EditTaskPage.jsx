@@ -1,4 +1,4 @@
-import { Save } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { TaskSchema } from "../utils/schema";
@@ -79,11 +79,12 @@ function EditTaskPage() {
         )
     }
 
-    const deleteTask = () => {
-        const confirmDelete = window.confirm()
+    const deleteTask = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this task?")
         if (confirmDelete) {
-            removeTask(id)
-            navigate("home/")
+            await removeTask(parseInt(id))
+            toast.success("Task deleted successfully!")
+            navigate("/home")
         }
     }
     return (
@@ -128,14 +129,15 @@ function EditTaskPage() {
                                 )}
                             </button>
                             <button
+                                type="button"
                                 disabled={loading || storeLoading}
-                                className='flex gap-2 items-center bg-violet-600 text-white font-bold py-3 px-10 rounded-lg w-max hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
-                                onClick={() => deleTask}
+                                className='flex gap-2 items-center bg-red-600 text-white font-bold py-3 px-10 rounded-lg w-max hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                                onClick={deleteTask}
                             >
                                 {loading || storeLoading ? <Spinner /> : (
                                     <>
-                                        <span className="inline text-lg">Save</span>
-                                        <Save className="w-5 h-5" />
+                                        <span className="inline text-lg">Delete Task</span>
+                                        <Trash2 className="w-5 h-5" />
                                     </>
                                 )}
                             </button>
