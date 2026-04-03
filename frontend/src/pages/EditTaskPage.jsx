@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 function EditTaskPage() {
 
-    const { editTask, loading: storeLoading, tasks, fetchTasks } = useTaskStore()
+    const { editTask, loading: storeLoading, tasks, fetchTasks, removeTask } = useTaskStore()
     const [loading, setLoading] = useState(false)
     const [taskData, setTaskData] = useState(null)
     const [loadingTask, setLoadingTask] = useState(true)
@@ -79,6 +79,13 @@ function EditTaskPage() {
         )
     }
 
+    const deleteTask = () => {
+        const confirmDelete = window.confirm()
+        if (confirmDelete) {
+            removeTask(id)
+            navigate("home/")
+        }
+    }
     return (
         <div className='w-full min-h-screen flex justify-center items-center bg-violet-100 p-4'>
             <div className='bg-white w-full max-w-lg rounded-3xl shadow-2xl'>
@@ -112,6 +119,18 @@ function EditTaskPage() {
                                 type="submit"
                                 disabled={loading || storeLoading}
                                 className='flex gap-2 items-center bg-violet-600 text-white font-bold py-3 px-10 rounded-lg w-max hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                            >
+                                {loading || storeLoading ? <Spinner /> : (
+                                    <>
+                                        <span className="inline text-lg">Save</span>
+                                        <Save className="w-5 h-5" />
+                                    </>
+                                )}
+                            </button>
+                            <button
+                                disabled={loading || storeLoading}
+                                className='flex gap-2 items-center bg-violet-600 text-white font-bold py-3 px-10 rounded-lg w-max hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                                onClick={() => deleTask}
                             >
                                 {loading || storeLoading ? <Spinner /> : (
                                     <>
