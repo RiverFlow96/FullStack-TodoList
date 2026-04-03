@@ -14,6 +14,9 @@ from django.utils.encoding import force_bytes, force_str
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class VerifiedTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -62,11 +65,13 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        logger.info("Nuevo registro de usuario pendiente de verificación", extra={"username": user.username, "email": user.email})
 
         email_sent = self._send_verification_email(user)
         detail_message = "Cuenta creada. Revisa tu correo para verificar tu email."
         if not email_sent:
             detail_message = "Cuenta creada, pero no pudimos enviar el correo ahora. Usa 'Reenviar verificación'."
+            logger.warning("No se pudo enviar correo de verificación al registrar", extra={"username": user.username, "email": user.email})
 
         return Response(
             {
@@ -116,6 +121,7 @@ class UserViewSet(viewsets.ModelViewSet):
             user = User.objects.filter(username=username).first()
 
         if user and not user.is_active:
+            logger.info("Reenvío de verificación solicitado", extra={"username": user.username, "email": user.email})
             self._send_verification_email(user)
 
         return Response(
@@ -128,6 +134,7 @@ class UserViewSet(viewsets.ModelViewSet):
         token = default_token_generator.make_token(user)
         verification_url = f"{settings.FRONTEND_URL}/auth/verify?uid={uid}&token={token}"
         try:
+            logger.info("Intentando enviar correo de verificación", extra={"username": user.username, "email": user.email})
             send_mail(
                 subject="Verifica tu cuenta",
                 message=(
@@ -139,6 +146,8 @@ class UserViewSet(viewsets.ModelViewSet):
                 recipient_list=[user.email],
                 fail_silently=False,
             )
+            logger.info("Correo de verificación enviado correctamente", extra={"username": user.username, "email": user.email})
             return True
-        except Exception:
+        except Exception as exc:
+            logger.exception("Error enviando correo de verificación", extra={"username": user.username, "email": user.email, "error": str(exc)})
             return False

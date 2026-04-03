@@ -21,11 +21,10 @@ export default function LoginLayout() {
         }
     }, [isLoggedIn, navigate])
 
-    const [lastUsername, setLastUsername] = useState("")
-
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors }
     } = useForm({
         resolver: zodResolver(loginSchema)
@@ -33,7 +32,6 @@ export default function LoginLayout() {
 
     const submit = async (data) => {
         setLoading(true)
-        setLastUsername(data.username)
         const success = await login(data.username, data.password)
         setLoading(false)
         if (success) {
@@ -42,16 +40,18 @@ export default function LoginLayout() {
     }
 
     const handleResend = async () => {
-        if (!lastUsername) {
-            toast.error("Primero intenta iniciar sesión para identificar tu cuenta")
+        const identifier = (watch("username") || "").trim()
+
+        if (!identifier) {
+            toast.error("Escribe tu usuario o email y luego presiona reenviar")
             return
         }
 
         try {
-            await resendVerification(lastUsername)
-            toast.success("Si tu cuenta no está verificada, enviamos un nuevo correo")
+            await resendVerification(identifier)
+            toast.success("Si la cuenta existe y no está verificada, enviamos el correo de verificación")
         } catch {
-            toast.error("No se pudo reenviar el correo en este momento")
+            toast.error("No pudimos reenviar el correo. Intenta nuevamente en unos segundos")
         }
     }
 
@@ -78,7 +78,7 @@ export default function LoginLayout() {
                     disabled={loading}
                     className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                 >
-                    {loading ? <Spinner variant="light" size="sm" /> : "Login"}
+                    {loading ? <Spinner variant="light" size="sm" /> : <span className="underline underline-offset-2">Login</span>}
                 </button>
                 <button
                     type="button"
