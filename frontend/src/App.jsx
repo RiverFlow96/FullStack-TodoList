@@ -9,6 +9,7 @@ import { TaskLayout } from "./layouts/TaskLayout";
 import AddTaskPage from "./pages/AddTaskPage";
 import { Toaster } from "react-hot-toast";
 import EditTaskPage from "./pages/EditTaskPage"
+import VerifyEmailPage from "./pages/VerifyEmailPage"
 
 function ProtectedLayout() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
@@ -80,6 +81,7 @@ function App() {
           }>
             <Route path="login" element={<LoginLayout />} />
             <Route path="register" element={<RegisterLayout />} />
+            <Route path="verify" element={<VerifyEmailPage />} />
             <Route index="true" element={<Navigate to="/auth/login" replace />} />
           </Route>
 

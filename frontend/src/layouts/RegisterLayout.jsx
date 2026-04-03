@@ -38,7 +38,7 @@ export default function RegisterLayout() {
                 email: data.email
             }
             await registerUser(userData.username, userData.password, userData.email)
-            toast.success("Registration successful! You can now log in.")
+            toast.success("Registro exitoso. Revisa tu email para verificar la cuenta.")
             navigate("/auth/login", { replace: true })
         } catch (error) {
             toast.error("Registration failed. Please try again.")
@@ -79,8 +79,8 @@ export default function RegisterLayout() {
                     <Mail className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />
                     <input {...register("email")} className="border-b-2 w-full pl-10 pr-4 py-2.5 text-sm sm:text-base outline-none focus:border-violet-600 transition-colors" type="email" placeholder="example@email.com" />
                 </div>
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     disabled={loading}
                     className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                 >

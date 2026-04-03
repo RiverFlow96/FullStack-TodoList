@@ -21,11 +21,12 @@ export const useAuthStore = create((set) => ({
             })
             return true
         } catch (err) {
+            const errorMessage = err?.message || "Usuario y contrasenia incorrectos"
             set({
                 user: null,
                 isLoggedIn: false,
                 token: null,
-                error: `Usuario y contrasenias incorrectos ${err}`
+                error: errorMessage
             })
             return false
         }

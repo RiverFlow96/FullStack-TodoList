@@ -9,7 +9,7 @@ const getPasswordRequirementsError = (password) => {
     if (!/[a-z]/.test(password)) missingRequirements.push("una letra minúscula")
     if (!/[A-Z]/.test(password)) missingRequirements.push("una letra mayúscula")
     if (!/[0-9]/.test(password)) missingRequirements.push("un número")
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) missingRequirements.push("al menos un carácter especial")
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) missingRequirements.push("y un carácter especial")
 
     if (missingRequirements.length === 0) return null
 

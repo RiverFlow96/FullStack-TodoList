@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { useAuthStore } from "../store/useStore";
 import { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
+import { resendVerification } from "../api/axios";
+import toast from "react-hot-toast";
 
 export default function LoginLayout() {
 
@@ -19,6 +21,8 @@ export default function LoginLayout() {
         }
     }, [isLoggedIn, navigate])
 
+    const [lastUsername, setLastUsername] = useState("")
+
     const {
         register,
         handleSubmit,
@@ -29,10 +33,25 @@ export default function LoginLayout() {
 
     const submit = async (data) => {
         setLoading(true)
+        setLastUsername(data.username)
         const success = await login(data.username, data.password)
         setLoading(false)
         if (success) {
             navigate("/home", { replace: true })
+        }
+    }
+
+    const handleResend = async () => {
+        if (!lastUsername) {
+            toast.error("Primero intenta iniciar sesión para identificar tu cuenta")
+            return
+        }
+
+        try {
+            await resendVerification(lastUsername)
+            toast.success("Si tu cuenta no está verificada, enviamos un nuevo correo")
+        } catch {
+            toast.error("No se pudo reenviar el correo en este momento")
         }
     }
 
@@ -54,12 +73,19 @@ export default function LoginLayout() {
                     <input {...register("password")} className="border-b-2 w-full pl-10 pr-4 py-2.5 text-sm sm:text-base outline-none focus:border-violet-600 transition-colors" type="password" placeholder="password" />
                 </div>
                 {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     disabled={loading}
                     className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                 >
-                    {loading ? <Spinner /> : "Login"}
+                    {loading ? <Spinner color={"bg-violet-700"} /> : "Login"}
+                </button>
+                <button
+                    type="button"
+                    onClick={handleResend}
+                    className="w-full text-sm text-violet-700 font-semibold hover:text-violet-900 transition-colors"
+                >
+                    Reenviar email de verificación
                 </button>
             </form>
         </div>

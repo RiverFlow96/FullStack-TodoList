@@ -1,20 +1,21 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const RAW_API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/"
-const API_URL = new URL("/api/", RAW_API_URL).toString()
-const API_AUTH_URL = new URL("/api-auth/", RAW_API_URL).toString()
-const TOKEN_REFRESH_URL = new URL("/api/token/refresh/", RAW_API_URL).toString()
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/"
+const API_AUTH_URL = API_URL.replace(/\/api\/?$/, "/api-auth/")
+const TOKEN_REFRESH_URL = API_URL.replace(/\/api\/?$/, "/api/token/refresh/")
+
+console.log("API URL:", API_URL)
 
 export const api = axios.create({
     baseURL: API_URL,
-    timeout: 10000,
+    timeout: 30000,
 })
 
 // Instancia sin autenticación para registro y login
 export const publicApi = axios.create({
     baseURL: API_URL,
-    timeout: 10000,
+    timeout: 30000,
 })
 
 export const auth = axios.create({
@@ -178,17 +179,32 @@ export const register = async (userData) => {
         })
 
         return {
-            user: response.data,
+            user: response.data.user,
+            detail: response.data.detail,
         }
     } catch (error) {
-        toast.error("Error registering user: ", error)
+        toast.error(error.response?.data?.detail || "Error registering user")
         throw error
     }
+}
+
+export const verifyEmail = async (uid, token) => {
+    const response = await publicApi.get(`users/verify-email/?uid=${encodeURIComponent(uid)}&token=${encodeURIComponent(token)}`)
+    return response.data
+}
+
+export const resendVerification = async (identifier) => {
+    const payload = identifier.includes('@')
+        ? { email: identifier }
+        : { username: identifier }
+    const response = await publicApi.post('users/resend-verification/', payload)
+    return response.data
 }
 //TODO Guardar username en storage para mostrar usuario en profile
 export const login = async (username, password) => {
     try {
-        const response = await api.post('token/', { username, password })
+        console.log("Attempting login to:", API_URL + "token/")
+        const response = await publicApi.post('token/', { username, password })
         if (response.data.access) {
             localStorage.setItem('access_token', response.data.access)
             localStorage.setItem('refresh_token', response.data.refresh)
@@ -198,7 +214,7 @@ export const login = async (username, password) => {
             localStorage.setItem('username', userResponse.data.username)
             localStorage.setItem('email', userResponse.data.email)
         }
-        console.log("Succefully")
+        console.log("Login successful")
         return true
     } catch (error) {
         console.error('Error login: ', error)
