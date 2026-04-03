@@ -171,27 +171,16 @@ export const register = async (userData) => {
             email: userData.email,
             password: userData.password
         })
-        // Auto-login después del registro
-        const resLogin = await publicApi.post('token/', {
-            username: userData.username,
-            password: userData.password
-        })
-        // Guardar tokens en localStorage
-        if (resLogin.data.access) {
-            localStorage.setItem('access_token', resLogin.data.access)
-            localStorage.setItem('refresh_token', resLogin.data.refresh)
-        }
-        toast.success("Succefully")
+
         return {
             user: response.data,
-            tokens: resLogin.data
         }
     } catch (error) {
         toast.error("Error registering user: ", error)
         throw error
     }
 }
-
+//TODO Guardar username en storage para mostrar usuario en profile
 export const login = async (username, password) => {
     try {
         const response = await api.post('token/', { username, password })
@@ -199,10 +188,15 @@ export const login = async (username, password) => {
             localStorage.setItem('access_token', response.data.access)
             localStorage.setItem('refresh_token', response.data.refresh)
         }
-        toast.success("Succefully")
-        return response.data
+        const userResponse = await api.get('users/me/')
+        if (userResponse.data) {
+            localStorage.setItem('username', userResponse.data.username)
+            localStorage.setItem('email', userResponse.data.email)
+        }
+        console.log("Succefully")
+        return true
     } catch (error) {
-        toast.error('Error login: ', error)
+        console.error('Error login: ', error)
         throw error
     }
 }
@@ -210,6 +204,8 @@ export const login = async (username, password) => {
 export const logout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+    localStorage.removeItem('username')
+    localStorage.removeItem('email')
     // Opcionalmente: redirigir a login o limpiar estado global
 };
 

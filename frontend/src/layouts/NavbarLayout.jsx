@@ -92,7 +92,7 @@ export function NavbarLayout() {
                         </Link>
                     ) : (
                         <div className="flex items-center gap-4">
-                            <Link to="profile/" className="p-2 hover:bg-violet-600 rounded-lg transition-colors">
+                            <Link to="/profile/" className="p-2 hover:bg-violet-600 rounded-lg transition-colors">
                                 <UserCircle2 className="w-8 h-8" />
                             </Link>
                             <button onClick={onLogout} className="p-2 hover:bg-violet-600 rounded-lg transition-colors">

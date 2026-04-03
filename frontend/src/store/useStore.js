@@ -5,14 +5,16 @@ import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
     user: null,
+    email: null,
     isLoggedIn: !!localStorage.getItem("access_token"),
     token: localStorage.getItem("access_token"),
     error: null,
     login: async (username, password) => {
         try {
             const data = await apiLogin(username, password)
+            const userData = { username }
             set({
-                user: { username },
+                user: userData,
                 isLoggedIn: true,
                 token: data.access,
                 error: null
@@ -30,6 +32,7 @@ export const useAuthStore = create((set) => ({
     },
     logout: () => {
         apiLogout()
+        localStorage.removeItem("user")
         set({
             user: null,
             isLoggedIn: false,
@@ -41,16 +44,10 @@ export const useAuthStore = create((set) => ({
         try {
             const data = await apiRegister({ username, password, email })
             set({
-                user: { username },
-                isLoggedIn: true,
-                token: data.tokens.access,
                 error: null
             })
         } catch (err) {
             set({
-                user: null,
-                isLoggedIn: false,
-                token: null,
                 error: `Error al registrarse: ${err.message}`
             })
             throw err

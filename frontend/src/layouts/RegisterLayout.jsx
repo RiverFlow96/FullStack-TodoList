@@ -22,13 +22,18 @@ export default function RegisterLayout() {
     })
 
     const onSubmit = async (data) => {
-        const userData = {
-            username: data.username,
-            password: data.password,
-            email: data.email
+        try {
+            const userData = {
+                username: data.username,
+                password: data.password,
+                email: data.email
+            }
+            await registerUser(userData.username, userData.password, userData.email)
+            console.log("User registered")
+            navigate("/auth/login", { replace: true })
+        } catch (error) {
+            console.error("Registration failed. Please try again.", error)
         }
-        await registerUser(userData.username, userData.password, userData.email)
-        navigate("/auth/login", { replace: true })
     }
 
     return (
