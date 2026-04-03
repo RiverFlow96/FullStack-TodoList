@@ -78,7 +78,7 @@ export default function LoginLayout() {
                     disabled={loading}
                     className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                 >
-                    {loading ? <Spinner color={"bg-violet-700"} /> : "Login"}
+                    {loading ? <Spinner variant="light" size="sm" /> : "Login"}
                 </button>
                 <button
                     type="button"

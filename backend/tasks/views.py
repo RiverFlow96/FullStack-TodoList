@@ -62,10 +62,16 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        self._send_verification_email(user)
+
+        email_sent = self._send_verification_email(user)
+        detail_message = "Cuenta creada. Revisa tu correo para verificar tu email."
+        if not email_sent:
+            detail_message = "Cuenta creada, pero no pudimos enviar el correo ahora. Usa 'Reenviar verificación'."
+
         return Response(
             {
-                "detail": "Cuenta creada. Revisa tu correo para verificar tu email.",
+                "detail": detail_message,
+                "email_sent": email_sent,
                 "user": serializer.data,
             },
             status=status.HTTP_201_CREATED,
@@ -121,15 +127,18 @@ class UserViewSet(viewsets.ModelViewSet):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         verification_url = f"{settings.FRONTEND_URL}/auth/verify?uid={uid}&token={token}"
-
-        send_mail(
-            subject="Verifica tu cuenta",
-            message=(
-                f"Hola {user.username},\n\n"
-                f"Gracias por registrarte. Verifica tu cuenta aquí:\n{verification_url}\n\n"
-                "Si no solicitaste esta cuenta, ignora este mensaje."
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
+        try:
+            send_mail(
+                subject="Verifica tu cuenta",
+                message=(
+                    f"Hola {user.username},\n\n"
+                    f"Gracias por registrarte. Verifica tu cuenta aquí:\n{verification_url}\n\n"
+                    "Si no solicitaste esta cuenta, ignora este mensaje."
+                ),
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[user.email],
+                fail_silently=False,
+            )
+            return True
+        except Exception:
+            return False

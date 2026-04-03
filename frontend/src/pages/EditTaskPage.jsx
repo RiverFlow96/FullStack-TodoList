@@ -130,7 +130,7 @@ function EditTaskPage() {
                                 disabled={loading || storeLoading}
                                 className='inline-flex gap-2 items-center justify-center bg-violet-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-36'
                             >
-                                {loading || storeLoading ? <Spinner /> : (
+                                {loading || storeLoading ? <Spinner variant="light" size="sm" /> : (
                                     <>
                                         <span className="text-lg">Save</span>
                                         <Save className="w-5 h-5" />
@@ -143,7 +143,7 @@ function EditTaskPage() {
                                 className='inline-flex gap-2 items-center justify-center bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-36'
                                 onClick={deleteTask}
                             >
-                                {loading || storeLoading ? <Spinner /> : (
+                                {loading || storeLoading ? <Spinner variant="light" size="sm" /> : (
                                     <>
                                         <span className="text-lg">Delete Task</span>
                                         <Trash2 className="w-5 h-5" />

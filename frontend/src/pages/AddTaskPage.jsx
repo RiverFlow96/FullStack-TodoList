@@ -83,7 +83,7 @@ function AddTaskPage() {
                                 disabled={loading || storeLoading}
                                 className='flex gap-2 items-center bg-violet-600 text-white font-bold py-3 px-10 rounded-lg w-max hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
                             >
-                                {loading || storeLoading ? <Spinner /> : (
+                                {loading || storeLoading ? <Spinner variant="light" size="sm" /> : (
                                     <>
                                         <span className="inline text-lg">Save</span>
                                         <Save className="w-5 h-5" />
