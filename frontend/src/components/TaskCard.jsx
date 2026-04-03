@@ -1,14 +1,24 @@
-import { Circle, CheckCircle2, Calendar } from "lucide-react";
+import { CheckCircle2, Calendar, Trash2 } from "lucide-react";
 import { useTaskStore } from "../store/useStore";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 function TaskCard({ title, description, completed, created_at, updated_at, id }) {
 
-    const { editTask } = useTaskStore()
+    const { editTask, removeTask } = useTaskStore()
     const navigate = useNavigate()
 
     const navigateToTask = () => {
         navigate(`/home/edit/${id}`)
+    }
+
+    const onDeleteTask = async (event) => {
+        event.stopPropagation()
+        const confirmDelete = window.confirm("Are you sure you want to delete this task?")
+        if (!confirmDelete) return
+
+        await removeTask(id)
+        toast.success("Task deleted")
     }
 
     return (
@@ -33,9 +43,20 @@ function TaskCard({ title, description, completed, created_at, updated_at, id })
                     <p className="font-bold font-sans text-xl md:text-2xl my-1 text-purple-950 line-clamp-2">{title}</p>
                     <p className="font-sans text-base text-black/60 line-clamp-2">{description || "No description"}</p>
                 </div>
-                <div className="flex items-center gap-2 mt-3 text-sm text-gray-500">
-                    <Calendar className="w-4 h-4 text-purple-950" />
-                    <p className="truncate">{created_at ? new Date(created_at).toLocaleDateString() : "No date"}</p>
+                <div className="flex items-center justify-between gap-2 mt-3 text-sm text-gray-500">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Calendar className="w-4 h-4 text-purple-950" />
+                        <p className="truncate">{created_at ? new Date(created_at).toLocaleDateString() : "No date"}</p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={onDeleteTask}
+                        className="shrink-0 inline-flex items-center justify-center w-9 h-9 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors"
+                        aria-label="Delete task"
+                        title="Delete task"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
                 </div>
             </div>
         </div>

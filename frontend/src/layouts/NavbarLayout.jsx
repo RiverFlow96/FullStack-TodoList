@@ -79,7 +79,10 @@ export function NavbarLayout() {
                 {/* Mobile Filter Button */}
                 <button
                     className="md:hidden p-2 text-white"
-                    onClick={() => setShowFilters(!showFilters)}
+                    onClick={() => {
+                        setShowFilters(!showFilters)
+                        if (menuOpen) setMenuOpen(false)
+                    }}
                 >
                     {showFilters ? <X className="w-6 h-6" /> : <Filter className="w-6 h-6" />}
                 </button>
@@ -105,7 +108,10 @@ export function NavbarLayout() {
                 {/* Mobile Menu Button */}
                 <button
                     className="md:hidden p-2 text-white"
-                    onClick={() => setMenuOpen(!menuOpen)}
+                    onClick={() => {
+                        setMenuOpen(!menuOpen)
+                        if (showFilters) setShowFilters(false)
+                    }}
                 >
                     {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
@@ -150,7 +156,7 @@ export function NavbarLayout() {
 
                 {/* Mobile Menu */}
                 {menuOpen && (
-                    <div className="absolute top-16 left-0 right-0 bg-violet-700 p-4 md:hidden flex flex-col gap-4 shadow-lg">
+                    <div className="absolute top-16 left-0 right-0 bg-violet-700 p-4 md:hidden flex flex-col gap-4 shadow-lg z-50">
                         {!isLoggedIn ? (
                             <Link
                                 to="/auth/login"
@@ -162,7 +168,7 @@ export function NavbarLayout() {
                         ) : (
                             <>
                                 <Link
-                                    to="profile/"
+                                    to="/profile"
                                     className="flex items-center gap-2 px-4 py-2 text-white hover:bg-violet-600 rounded-lg"
                                     onClick={() => setMenuOpen(false)}
                                 >

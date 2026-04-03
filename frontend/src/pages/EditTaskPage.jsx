@@ -115,15 +115,15 @@ function EditTaskPage() {
                             />
                             {errors.description && <span className="text-red-600 text-xs mt-1">{errors.description.message}</span>}
                         </div>
-                        <div className='w-full flex items-center justify-center mt-4'>
+                        <div className='w-full flex flex-wrap items-center justify-end gap-3 mt-4'>
                             <button
                                 type="submit"
                                 disabled={loading || storeLoading}
-                                className='flex gap-2 items-center bg-violet-600 text-white font-bold py-3 px-10 rounded-lg w-max hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                                className='inline-flex gap-2 items-center justify-center bg-violet-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-36'
                             >
                                 {loading || storeLoading ? <Spinner /> : (
                                     <>
-                                        <span className="inline text-lg">Save</span>
+                                        <span className="text-lg">Save</span>
                                         <Save className="w-5 h-5" />
                                     </>
                                 )}
@@ -131,12 +131,12 @@ function EditTaskPage() {
                             <button
                                 type="button"
                                 disabled={loading || storeLoading}
-                                className='flex gap-2 items-center bg-red-600 text-white font-bold py-3 px-10 rounded-lg w-max hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+                                className='inline-flex gap-2 items-center justify-center bg-red-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-36'
                                 onClick={deleteTask}
                             >
                                 {loading || storeLoading ? <Spinner /> : (
                                     <>
-                                        <span className="inline text-lg">Delete Task</span>
+                                        <span className="text-lg">Delete Task</span>
                                         <Trash2 className="w-5 h-5" />
                                     </>
                                 )}
