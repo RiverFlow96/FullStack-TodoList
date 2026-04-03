@@ -1,4 +1,4 @@
-import { Save, Trash2 } from "lucide-react";
+import { ArrowLeft, Save, Trash2 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { TaskSchema } from "../utils/schema";
@@ -90,7 +90,16 @@ function EditTaskPage() {
     return (
         <div className='w-full min-h-screen flex justify-center items-center bg-violet-100 p-4'>
             <div className='bg-white w-full max-w-lg rounded-3xl shadow-2xl'>
-                <div className='w-full h-20 bg-linear-to-br from-violet-700 to-purple-700 rounded-t-3xl flex items-center justify-center'>
+                <div className='w-full h-20 bg-linear-to-br from-violet-700 to-purple-700 rounded-t-3xl flex items-center justify-center relative px-4'>
+                    <button
+                        type="button"
+                        onClick={() => navigate("/home")}
+                        className="absolute left-4 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/15 text-white hover:bg-white/25 transition-colors"
+                        aria-label="Go home"
+                        title="Go home"
+                    >
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
                     <h1 className='text-3xl text-white font-bold'>Edit Task</h1>
                 </div>
 
