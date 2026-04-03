@@ -4,12 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "../utils/schema";
 import { useForm } from "react-hook-form";
 import { useAuthStore } from "../store/useStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import Spinner from "../components/Spinner";
 
 export default function LoginLayout() {
 
     const navigate = useNavigate()
     const { login, isLoggedIn } = useAuthStore()
+    const [loading, setLoading] = useState(false)
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            navigate("/home", { replace: true })
+        }
+    }, [isLoggedIn, navigate])
 
     const {
         register,
@@ -20,7 +28,9 @@ export default function LoginLayout() {
     })
 
     const submit = async (data) => {
+        setLoading(true)
         const success = await login(data.username, data.password)
+        setLoading(false)
         if (success) {
             navigate("/home", { replace: true })
         }
@@ -44,7 +54,13 @@ export default function LoginLayout() {
                     <input {...register("password")} className="border-b-2 w-full pl-10 pr-4 py-2.5 text-sm sm:text-base outline-none focus:border-violet-600 transition-colors" type="password" placeholder="password" />
                 </div>
                 {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
-                <button type="submit" className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors">Login</button>
+                <button 
+                    type="submit" 
+                    disabled={loading}
+                    className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+                >
+                    {loading ? <Spinner /> : "Login"}
+                </button>
             </form>
         </div>
     )

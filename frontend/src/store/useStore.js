@@ -84,8 +84,10 @@ export const useTaskStore = create((set, get) => ({
         try {
             const newTask = await createTask(taskData)
             set({ tasks: [newTask, ...get().tasks], loading: false })
+            return true
         } catch (err) {
             set({ error: err.message, loading: false })
+            return false
         }
     },
 
@@ -93,6 +95,7 @@ export const useTaskStore = create((set, get) => ({
         try {
             const updated = await updateTask(updates, id)
             set({ tasks: get().tasks.map(t => t.id === id ? updated : t) })
+            console.log("Created task")
         } catch (err) {
             console.error("Error updating task:", err)
         }

@@ -24,3 +24,8 @@ export const loginSchema = z.object({
         .regex(/(?=.*[0-9])/, 'debe contener al meno un numero')
         .regex(/(?=.*[!@#$%^&*(),.?":{}|<>])/, 'debe contener caracteres especiales'),
 })
+
+export const TaskSchema = z.object({
+    title: z.string().min(1, { error: "Este campo es obligatorio" }),
+    description: z.string()
+})

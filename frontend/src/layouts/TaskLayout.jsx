@@ -3,7 +3,7 @@ import { useTaskStore } from "../store/useStore";
 import TaskCard from "../components/TaskCard";
 import Spinner from "../components/Spinner";
 import { PlusIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 export function TaskLayout() {
 
@@ -87,7 +87,7 @@ export function TaskLayout() {
                 </div>
             )}
             <button className="fixed bottom-8 right-8 w-14 h-14 bg-violet-600 rounded-full shadow-lg hover:bg-violet-700 hover:scale-110 transition-transform flex items-center justify-center">
-                <Link>{<PlusIcon className="w-6 h-6 text-white" />}</Link>
+                <Link to={"add/"}>{<PlusIcon className="w-6 h-6 text-white" />}</Link>
             </button>
         </div>
     )

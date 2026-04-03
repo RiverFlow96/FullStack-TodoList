@@ -1,10 +1,12 @@
 import { UserCircle2, Mail, CheckCircle, Circle, Clock, ListChecks } from "lucide-react"
 import { useTaskStore } from "../store/useStore"
 import { useEffect } from "react"
+import Spinner from "../components/Spinner"
 
 function ProfileLayout() {
     const tasks = useTaskStore((state) => state.tasks)
     const fetchTasks = useTaskStore((state) => state.fetchTasks)
+    const loading = useTaskStore((state) => state.loading)
 
     useEffect(() => {
         fetchTasks()
@@ -14,13 +16,21 @@ function ProfileLayout() {
     const pendingTasks = tasks.filter(t => !t.completed).length
     const lastTask = tasks.length > 0 ? tasks[0] : null
 
+    if (loading && tasks.length === 0) {
+        return (
+            <div className="w-full min-h-screen bg-gradient-to-br from-violet-100 to-purple-100 flex items-center justify-center">
+                <Spinner />
+            </div>
+        )
+    }
+
     return (
         <div className="w-full min-h-screen bg-gradient-to-br from-violet-100 to-purple-100 py-12 px-4">
             <div className="max-w-2xl mx-auto">
                 {/* Profile Card */}
                 <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
                     {/* Header with gradient */}
-                    <div className="bg-gradient-to-r from-violet-600 to-purple-600 h-40 relative">
+                    <div className="bg-linear-to-r from-violet-600 to-purple-600 h-40 relative">
                         <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
                             <div className="bg-white rounded-full p-2 shadow-xl">
                                 <UserCircle2 size={110} strokeWidth={1} className="text-violet-600" />
@@ -94,7 +104,7 @@ function ProfileLayout() {
                                     <span className="font-bold text-violet-600">{Math.round((completedTasks / tasks.length) * 100)}%</span>
                                 </div>
                                 <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
-                                    <div 
+                                    <div
                                         className="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full transition-all duration-500"
                                         style={{ width: `${(completedTasks / tasks.length) * 100}%` }}
                                     ></div>

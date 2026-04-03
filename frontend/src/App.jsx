@@ -6,6 +6,8 @@ import LoginLayout from "./layouts/LoginLayout";
 import RegisterLayout from "./layouts/RegisterLayout";
 import ProfilePage from "./pages/ProfilePage";
 import { TaskLayout } from "./layouts/TaskLayout";
+import AddTaskPage from "./pages/AddTaskPage";
+import { Toaster } from "react-hot-toast";
 
 function ProtectedLayout() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn)
@@ -31,6 +33,29 @@ function App() {
 
   return (
     <>
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+            borderRadius: '10px',
+          },
+          success: {
+            iconTheme: {
+              primary: '#4ade80',
+              secondary: '#fff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#ef4444',
+              secondary: '#fff',
+            },
+          },
+        }}
+      />
       <BrowserRouter>
         <Routes>
           {/* Redirect root to home */}
@@ -42,11 +67,15 @@ function App() {
               <Route index="true" element={<TaskLayout />} />
             </Route>
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="/home/add" element={<AddTaskPage />} />
+            <Route path="/home/add:id" element={<AddTaskPage />} />
           </Route>
 
           {/* Public routes - only for non-logged users */}
           <Route path="/auth" element={
-            <AuthPage />
+            <PublicOnlyRoute>
+              <AuthPage />
+            </PublicOnlyRoute>
           }>
             <Route path="login" element={<LoginLayout />} />
             <Route path="register" element={<RegisterLayout />} />
