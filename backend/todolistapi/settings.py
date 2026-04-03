@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -80,19 +80,15 @@ WSGI_APPLICATION = "todolistapi.wsgi.application"
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # Use PostgreSQL in production, SQLite in development
-if os.getenv('DATABASE_URL'):
-    
-    DATABASES = {
-        'default': dj_database_url.parse(os.getenv('DATABASE_URL'))
-    }
+if os.getenv("DATABASE_URL"):
+    DATABASES = {"default": dj_database_url.parse(os.getenv("DATABASE_URL"))}
 else:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
 
 
 # Password validation
@@ -130,12 +126,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# whitenoise for serving static files in production
+MIDDLEWARE = [
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+] + MIDDLEWARE
 
 # CORS configuration for production
-cors_origin = os.getenv('CORS_ALLOWED_ORIGINS', '')
+cors_origin = os.getenv("CORS_ALLOWED_ORIGINS", "")
 if cors_origin:
     CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS = cors_origin.split(',')
+    CORS_ALLOWED_ORIGINS = cors_origin.split(",")
 else:
     CORS_ALLOW_ALL_ORIGINS = True
 
@@ -161,4 +163,4 @@ SPECTACULAR_SETTINGS = {
     },
 }
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
