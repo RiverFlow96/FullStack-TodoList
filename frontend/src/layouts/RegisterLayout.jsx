@@ -37,8 +37,14 @@ export default function RegisterLayout() {
                 password: data.password,
                 email: data.email
             }
-            await registerUser(userData.username, userData.password, userData.email)
-            toast.success("Registro exitoso. Revisa tu email para verificar la cuenta.")
+            const result = await registerUser(userData.username, userData.password, userData.email)
+
+            if (result?.email_sent === false) {
+                toast.error(result?.detail || "Cuenta creada, pero no se pudo enviar el correo de verificación.")
+            } else {
+                toast.success(result?.detail || "Registro exitoso. Revisa tu email para verificar la cuenta.")
+            }
+
             navigate("/auth/login", { replace: true })
         } catch (error) {
             toast.error("Registration failed. Please try again.")

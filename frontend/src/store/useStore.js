@@ -47,6 +47,7 @@ export const useAuthStore = create((set) => ({
             set({
                 error: null
             })
+            return data
         } catch (err) {
             set({
                 error: `Error al registrarse: ${err.message}`
