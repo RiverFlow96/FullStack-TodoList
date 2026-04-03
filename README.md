@@ -78,6 +78,39 @@ npm run dev
 
 Abre http://localhost:5173
 
+## Deploy (Render + Supabase + Cloudflare)
+
+### 1) Backend en Render
+
+- Root del servicio: `backend/`
+- Build command: `./build.sh`
+- Start command: `gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT`
+- También puedes usar `render.yaml` en la raíz para autoconfigurar.
+
+Variables mínimas en Render:
+
+- `SECRET_KEY`
+- `DEBUG=False`
+- `DATABASE_URL` (cadena de conexión de Supabase)
+- `ALLOWED_HOSTS=tu-backend.onrender.com`
+- `CORS_ALLOWED_ORIGINS=https://tu-frontend.pages.dev`
+- `CSRF_TRUSTED_ORIGINS=https://tu-backend.onrender.com`
+
+### 2) Base de datos en Supabase (PostgreSQL)
+
+- Crea un proyecto en Supabase.
+- Copia la URL de conexión PostgreSQL y pégala en `DATABASE_URL` de Render.
+- Ejecuta migraciones (Render lo hace en `build.sh` con `python manage.py migrate`).
+
+### 3) Frontend en Cloudflare Pages
+
+- Project root: `frontend/`
+- Build command: `npm run build` (o `bun run build`)
+- Output directory: `dist`
+- Env var: `VITE_API_URL=https://tu-backend.onrender.com/api/`
+
+Se incluye `frontend/public/_redirects` con `/* /index.html 200` para soportar rutas SPA de React Router.
+
 ## API Endpoints
 
 | Método | Endpoint | Descripción |

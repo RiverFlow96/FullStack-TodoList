@@ -6,7 +6,6 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import dj_database_url
-import whitenoise
 
 load_dotenv()
 
@@ -25,8 +24,14 @@ SECRET_KEY = os.getenv(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-# Get allowed hosts from environment variable or use default
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
+# Get allowed hosts from environment variable or use safe defaults
+ALLOWED_HOSTS = [
+    host.strip() for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host.strip()
+]
+
+render_hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if render_hostname and render_hostname not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_hostname)
 
 # Application definition
 
@@ -80,8 +85,20 @@ WSGI_APPLICATION = "todolistapi.wsgi.application"
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 # Use PostgreSQL in production, SQLite in development
-if os.getenv("DATABASE_URL"):
-    DATABASES = {"default": dj_database_url.parse(os.getenv("DATABASE_URL"))}
+database_url = os.getenv("DATABASE_URL")
+if database_url:
+    DATABASES = {"default": dj_database_url.parse(database_url, conn_max_age=600, ssl_require=True)}
+elif os.getenv("DB_ENGINE") == "django.db.backends.postgresql":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME", "postgres"),
+            "USER": os.getenv("DB_USER", "postgres"),
+            "PASSWORD": os.getenv("DB_PASSWORD", ""),
+            "HOST": os.getenv("DB_HOST", "localhost"),
+            "PORT": os.getenv("DB_PORT", "5432"),
+        }
+    }
 else:
     DATABASES = {
         "default": {
@@ -128,18 +145,25 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# whitenoise for serving static files in production
-MIDDLEWARE = [
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-] + MIDDLEWARE
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # CORS configuration for production
-cors_origin = os.getenv("CORS_ALLOWED_ORIGINS", "")
-if cors_origin:
+cors_origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+if cors_origins:
     CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS = cors_origin.split(",")
+    CORS_ALLOWED_ORIGINS = cors_origins
 else:
     CORS_ALLOW_ALL_ORIGINS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

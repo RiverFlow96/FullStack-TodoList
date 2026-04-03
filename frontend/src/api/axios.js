@@ -1,7 +1,10 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/'
+const RAW_API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/"
+const API_URL = new URL("/api/", RAW_API_URL).toString()
+const API_AUTH_URL = new URL("/api-auth/", RAW_API_URL).toString()
+const TOKEN_REFRESH_URL = new URL("/api/token/refresh/", RAW_API_URL).toString()
 
 export const api = axios.create({
     baseURL: API_URL,
@@ -15,7 +18,7 @@ export const publicApi = axios.create({
 })
 
 export const auth = axios.create({
-    baseURL: 'http://localhost:8000/api-auth/',
+    baseURL: API_AUTH_URL,
     timeout: 10000,
 })
 
@@ -82,7 +85,7 @@ api.interceptors.response.use(
 
                 // Refrescar el token
                 const response = await axios.post(
-                    'http://localhost:8000/api/token/refresh/',
+                    TOKEN_REFRESH_URL,
                     { refresh: refreshToken },
                     { timeout: 10000 }
                 )
