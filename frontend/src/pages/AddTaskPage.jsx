@@ -1,10 +1,10 @@
 import { ArrowLeft, Save } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { TaskSchema } from "../utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTaskStore } from "../store/useStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 
@@ -12,12 +12,28 @@ function AddTaskPage() {
 
     const { addTask, loading: storeLoading } = useTaskStore()
     const [loading, setLoading] = useState(false)
+    const [aiMeta, setAiMeta] = useState(null)
+    const location = useLocation()
 
-    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
         resolver: zodResolver(TaskSchema)
     })
 
     const navigate = useNavigate()
+
+    useEffect(() => {
+        const suggestion = location.state?.aiSuggestion
+        if (!suggestion) return
+
+        setValue("title", suggestion.title || "")
+        setValue("description", suggestion.description || "")
+        setAiMeta({
+            priority: suggestion.priority || "medium",
+            tags: suggestion.tags || [],
+        })
+        toast.success("Sugerencia IA cargada en el formulario")
+        navigate(location.pathname, { replace: true, state: {} })
+    }, [location.pathname, location.state, navigate, setValue])
 
     const onSubmit = async (data) => {
         console.log("Submit triggered with data:", data)
@@ -57,6 +73,15 @@ function AddTaskPage() {
                 </div>
 
                 <div className='w-full p-8'>
+                    {aiMeta && (
+                        <div className="mb-4 p-3 rounded-lg bg-indigo-50 border border-indigo-100">
+                            <p className="text-sm font-semibold text-indigo-700">Sugerencia IA aplicada</p>
+                            <p className="text-xs text-indigo-600 mt-1">Priority: {aiMeta.priority}</p>
+                            {aiMeta.tags.length > 0 && (
+                                <p className="text-xs text-indigo-600 mt-1">Tags: {aiMeta.tags.join(", ")}</p>
+                            )}
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-col gap-5'>
                         <div className='flex flex-col w-full'>
                             <p className="font-bold text-xl mb-2">Title: </p>

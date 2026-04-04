@@ -169,6 +169,19 @@ export const deleteTask = async (taskId) => {
     }
 }
 
+export const suggestTaskWithAI = async ({ prompt, context }) => {
+    try {
+        const response = await api.post("ai/suggest-task/", {
+            prompt,
+            context,
+        })
+        return response.data
+    } catch (error) {
+        const detail = error?.response?.data?.detail
+        throw new Error(detail || "No se pudo generar la sugerencia con IA")
+    }
+}
+
 export const register = async (userData) => {
     try {
         // Usar publicApi para el registro (sin requerir autenticación)

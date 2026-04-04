@@ -1,11 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTaskStore } from "../store/useStore";
 import TaskCard from "../components/TaskCard";
 import Spinner from "../components/Spinner";
 import { PlusIcon } from "lucide-react";
-import { Link, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import AIAssistantFAB from "../components/AIAssistantFAB";
+import AIAssistantModal from "../components/AIAssistantModal";
 
 export function TaskLayout() {
+
+    const navigate = useNavigate()
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false)
 
     const { tasks, fetchTasks, loading, error, order_by, sort_by, filter_by, search_query } = useTaskStore()
 
@@ -70,6 +75,14 @@ export function TaskLayout() {
 
     const processedTasks = processTasks(tasks)
 
+    const handleUseSuggestion = (suggestion) => {
+        navigate("add/", {
+            state: {
+                aiSuggestion: suggestion,
+            },
+        })
+    }
+
     if (loading) return <div className="w-dvw h-dvh flex justify-center items-center"><Spinner></Spinner></div>
     if (error) return <div className="w-dvw h-dvh flex justify-center items-center text-3xl text-red-700 font-bold font-sans">Error: {error}</div>
 
@@ -86,9 +99,25 @@ export function TaskLayout() {
                     ))}
                 </div>
             )}
-            <button className="fixed bottom-8 right-8 w-14 h-14 bg-violet-600 rounded-full shadow-lg hover:bg-violet-700 hover:scale-110 transition-transform flex items-center justify-center">
-                <Link to={"add/"}>{<PlusIcon className="w-6 h-6 text-white" />}</Link>
-            </button>
+            <div className="fixed bottom-6 right-5 sm:bottom-8 sm:right-8 flex flex-col items-center gap-3 z-40">
+                <AIAssistantFAB onClick={() => setIsAIModalOpen(true)} />
+                <button
+                    type="button"
+                    onClick={() => navigate("add/")}
+                    className="w-14 h-14 bg-violet-600 rounded-full shadow-lg hover:bg-violet-700 hover:scale-110 transition-transform flex items-center justify-center focus:outline-none focus-visible:ring-4 focus-visible:ring-violet-300"
+                    aria-label="Add task"
+                    title="Add task"
+                >
+                    <PlusIcon className="w-6 h-6 text-white" />
+                </button>
+            </div>
+
+            <AIAssistantModal
+                isOpen={isAIModalOpen}
+                onClose={() => setIsAIModalOpen(false)}
+                existingTasks={tasks}
+                onUseSuggestion={handleUseSuggestion}
+            />
         </div>
     )
 }
