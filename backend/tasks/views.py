@@ -370,13 +370,10 @@ class UserViewSet(viewsets.ModelViewSet):
                 return False
         except urllib_error.HTTPError as exc:
             error_payload = exc.read().decode("utf-8", errors="ignore")
-            logger.error(
-                "Brevo rejected request with HTTP %s: %s",
+            logger.exception(
+                "Error HTTP al enviar con Brevo (status=%s, response=%s)",
                 exc.code,
                 error_payload,
-            )
-            logger.exception(
-                "Error HTTP al enviar con Brevo",
                 extra={
                     "username": user.username,
                     "email": user.email,
