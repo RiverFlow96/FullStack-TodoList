@@ -9,6 +9,14 @@ import dj_database_url
 
 load_dotenv()
 
+
+def env_str(name, default=""):
+    value = os.getenv(name, default)
+    if not isinstance(value, str):
+        return value
+    return value.strip().strip('"').strip("'")
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv(
+SECRET_KEY = env_str(
     "SECRET_KEY", "django-insecure--sl%gjkw(-apa$5ce#md#cl(_d2fk#q5d&m!x^y*b@@d4j@1ek"
 )
 
@@ -26,12 +34,16 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 # Get allowed hosts from environment variable or use safe defaults
 ALLOWED_HOSTS = [
-    host.strip() for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host.strip()
+    host.strip()
+    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if host.strip()
 ]
 
 render_hostname = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if render_hostname and render_hostname not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(render_hostname)
+
+ALLOWED_HOSTS = [host.strip('"').strip("'") for host in ALLOWED_HOSTS]
 
 # Application definition
 
@@ -87,7 +99,11 @@ WSGI_APPLICATION = "todolistapi.wsgi.application"
 # Use PostgreSQL in production, SQLite in development
 database_url = os.getenv("DATABASE_URL")
 if database_url:
-    DATABASES = {"default": dj_database_url.parse(database_url, conn_max_age=600, ssl_require=True)}
+    DATABASES = {
+        "default": dj_database_url.parse(
+            database_url, conn_max_age=600, ssl_require=True
+        )
+    }
 elif os.getenv("DB_ENGINE") == "django.db.backends.postgresql":
     DATABASES = {
         "default": {
@@ -149,9 +165,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # CORS configuration for production
 cors_origins = [
-    origin.strip()
-    for origin in os.getenv("CORS_ALLOWED_ORIGINS", "").split(",")
-    if origin.strip()
+    origin.strip().strip('"').strip("'")
+    for origin in env_str("CORS_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip().strip('"').strip("'")
 ]
 if cors_origins:
     CORS_ALLOW_ALL_ORIGINS = False
@@ -160,9 +176,9 @@ else:
     CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    origin.strip()
-    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
-    if origin.strip()
+    origin.strip().strip('"').strip("'")
+    for origin in env_str("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip().strip('"').strip("'")
 ]
 
 REST_FRAMEWORK = {
@@ -189,17 +205,21 @@ SPECTACULAR_SETTINGS = {
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
+FRONTEND_URL = env_str("FRONTEND_URL", "http://localhost:5173")
 
-EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "smtp").strip().lower()
-RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-RESEND_API_URL = os.getenv("RESEND_API_URL", "https://api.resend.com/emails")
+EMAIL_PROVIDER = env_str("EMAIL_PROVIDER", "smtp").lower()
+RESEND_API_KEY = env_str("RESEND_API_KEY", "")
+RESEND_API_URL = env_str("RESEND_API_URL", "https://api.resend.com/emails")
+BREVO_API_KEY = env_str("BREVO_API_KEY", "")
+BREVO_API_URL = env_str("BREVO_API_URL", "https://api.brevo.com/v3/smtp/email")
 
-EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_BACKEND = env_str("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = env_str("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_HOST_USER = env_str("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = env_str("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
 EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", 10))
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@example.com")
+DEFAULT_FROM_EMAIL = env_str(
+    "DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@example.com"
+)

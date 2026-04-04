@@ -48,8 +48,12 @@ export default function LoginLayout() {
         }
 
         try {
-            await resendVerification(identifier)
-            toast.success("Si la cuenta existe y no está verificada, enviamos el correo de verificación")
+            const result = await resendVerification(identifier)
+            if (result?.email_sent) {
+                toast.success("Correo de verificación enviado")
+            } else {
+                toast.error("No se pudo enviar el correo de verificación")
+            }
         } catch {
             toast.error("No pudimos reenviar el correo. Intenta nuevamente en unos segundos")
         }
