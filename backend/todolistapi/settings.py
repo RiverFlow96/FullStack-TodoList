@@ -191,6 +191,10 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173")
 
+EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "smtp").strip().lower()
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+RESEND_API_URL = os.getenv("RESEND_API_URL", "https://api.resend.com/emails")
+
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))

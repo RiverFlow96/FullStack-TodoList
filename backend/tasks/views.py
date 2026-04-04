@@ -15,6 +15,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.exceptions import AuthenticationFailed
 import logging
+import json
+from urllib import error as urllib_error
+from urllib import request as urllib_request
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +136,18 @@ class UserViewSet(viewsets.ModelViewSet):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         verification_url = f"{settings.FRONTEND_URL}/auth/verify?uid={uid}&token={token}"
+
+        if settings.EMAIL_PROVIDER == "resend" and settings.RESEND_API_KEY:
+            logger.info(
+                "Enviando verificación con proveedor HTTPS",
+                extra={
+                    "provider": settings.EMAIL_PROVIDER,
+                    "username": user.username,
+                    "email": user.email,
+                },
+            )
+            return self._send_verification_email_resend(user, verification_url)
+
         try:
             logger.info("Intentando enviar correo de verificación", extra={"username": user.username, "email": user.email})
             send_mail(
@@ -150,4 +165,75 @@ class UserViewSet(viewsets.ModelViewSet):
             return True
         except Exception as exc:
             logger.exception("Error enviando correo de verificación", extra={"username": user.username, "email": user.email, "error": str(exc)})
+            return False
+
+    def _send_verification_email_resend(self, user, verification_url):
+        subject = "Verifica tu cuenta"
+        body_text = (
+            f"Hola {user.username},\n\n"
+            f"Gracias por registrarte. Verifica tu cuenta aquí:\n{verification_url}\n\n"
+            "Si no solicitaste esta cuenta, ignora este mensaje."
+        )
+        body_html = (
+            f"<p>Hola {user.username},</p>"
+            f"<p>Gracias por registrarte. Verifica tu cuenta <a href=\"{verification_url}\">aquí</a>.</p>"
+            "<p>Si no solicitaste esta cuenta, ignora este mensaje.</p>"
+        )
+
+        payload = {
+            "from": settings.DEFAULT_FROM_EMAIL,
+            "to": [user.email],
+            "subject": subject,
+            "text": body_text,
+            "html": body_html,
+        }
+        headers = {
+            "Authorization": f"Bearer {settings.RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        }
+
+        try:
+            req = urllib_request.Request(
+                settings.RESEND_API_URL,
+                data=json.dumps(payload).encode("utf-8"),
+                headers=headers,
+                method="POST",
+            )
+            with urllib_request.urlopen(req, timeout=settings.EMAIL_TIMEOUT) as response:
+                status_code = response.getcode()
+                if status_code in (200, 201, 202):
+                    logger.info(
+                        "Correo de verificación enviado con Resend",
+                        extra={"username": user.username, "email": user.email, "status_code": status_code},
+                    )
+                    return True
+
+                raw_response = response.read().decode("utf-8", errors="ignore")
+                logger.error(
+                    "Respuesta inesperada de Resend",
+                    extra={
+                        "username": user.username,
+                        "email": user.email,
+                        "status_code": status_code,
+                        "response": raw_response,
+                    },
+                )
+                return False
+        except urllib_error.HTTPError as exc:
+            error_payload = exc.read().decode("utf-8", errors="ignore")
+            logger.exception(
+                "Error HTTP al enviar con Resend",
+                extra={
+                    "username": user.username,
+                    "email": user.email,
+                    "status_code": exc.code,
+                    "response": error_payload,
+                },
+            )
+            return False
+        except Exception as exc:
+            logger.exception(
+                "Error enviando correo con Resend",
+                extra={"username": user.username, "email": user.email, "error": str(exc)},
+            )
             return False
