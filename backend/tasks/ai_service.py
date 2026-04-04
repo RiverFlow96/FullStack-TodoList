@@ -22,6 +22,10 @@ class ProviderQuotaError(AIServiceError):
     pass
 
 
+class ProviderAuthError(AIServiceError):
+    pass
+
+
 class BaseLLMProvider:
     def suggest_task(self, prompt, existing_tasks):
         raise NotImplementedError
@@ -76,7 +80,7 @@ def _http_json_request(url, payload, headers):
         if exc.code == 429:
             raise ProviderQuotaError("Provider quota exceeded") from exc
         if exc.code in (401, 403):
-            raise AIServiceError(
+            raise ProviderAuthError(
                 "Provider authentication/authorization failed"
             ) from exc
         if exc.code >= 500:

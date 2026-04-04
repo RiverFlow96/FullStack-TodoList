@@ -161,7 +161,7 @@ export const updateTask = async (taskData, taskId) => {
 
 export const deleteTask = async (taskId) => {
     try {
-        await api.delete(`tasks/${taskId}`)
+        await api.delete(`tasks/${taskId}/`)
         return true
     } catch (error) {
         console.error('Error deleting task: ', error)
