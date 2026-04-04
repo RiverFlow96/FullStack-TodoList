@@ -87,7 +87,6 @@ export default function RegisterLayout() {
                 >
                     {loading ? <Spinner variant="light" size="sm" /> : "Register"}
                 </button>
-                <button className="border-2 w-full mb-2 rounded-lg h-10 sm:h-11 text-black font-bold hover:shadow-md hover:shadow-black hover:bg-gray-200 hover:text-black/80 transition-colors">Google</button>
             </form>
         </div>
     )
