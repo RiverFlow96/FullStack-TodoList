@@ -40,9 +40,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        user.is_active = True
-        user.save(update_fields=["is_active"])
+        serializer.save()
 
         return Response(
             {
