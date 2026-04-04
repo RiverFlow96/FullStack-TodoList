@@ -188,18 +188,6 @@ export const register = async (userData) => {
     }
 }
 
-export const verifyEmail = async (uid, token) => {
-    const response = await publicApi.get(`users/verify-email/?uid=${encodeURIComponent(uid)}&token=${encodeURIComponent(token)}`)
-    return response.data
-}
-
-export const resendVerification = async (identifier) => {
-    const payload = identifier.includes('@')
-        ? { email: identifier }
-        : { username: identifier }
-    const response = await publicApi.post('users/resend-verification/', payload)
-    return response.data
-}
 //TODO Guardar username en storage para mostrar usuario en profile
 export const login = async (username, password) => {
     try {
@@ -229,4 +217,3 @@ export const logout = () => {
     localStorage.removeItem('email')
     // Opcionalmente: redirigir a login o limpiar estado global
 };
-

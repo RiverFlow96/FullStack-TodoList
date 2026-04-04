@@ -6,8 +6,6 @@ import { useForm } from "react-hook-form";
 import { useAuthStore } from "../store/useStore";
 import { useEffect, useState } from "react";
 import Spinner from "../components/Spinner";
-import { resendVerification } from "../api/axios";
-import toast from "react-hot-toast";
 
 export default function LoginLayout() {
 
@@ -24,7 +22,6 @@ export default function LoginLayout() {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors }
     } = useForm({
         resolver: zodResolver(loginSchema)
@@ -36,26 +33,6 @@ export default function LoginLayout() {
         setLoading(false)
         if (success) {
             navigate("/home", { replace: true })
-        }
-    }
-
-    const handleResend = async () => {
-        const identifier = (watch("username") || "").trim()
-
-        if (!identifier) {
-            toast.error("Escribe tu usuario o email y luego presiona reenviar")
-            return
-        }
-
-        try {
-            const result = await resendVerification(identifier)
-            if (result?.email_sent) {
-                toast.success("Correo de verificación enviado")
-            } else {
-                toast.error("No se pudo enviar el correo de verificación")
-            }
-        } catch {
-            toast.error("No pudimos reenviar el correo. Intenta nuevamente en unos segundos")
         }
     }
 
@@ -83,13 +60,6 @@ export default function LoginLayout() {
                     className="border-2 w-full mt-2 mb-3 rounded-lg h-10 sm:h-11 bg-violet-700 text-white font-bold hover:shadow-md hover:shadow-black hover:bg-violet-600 hover:text-white/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
                 >
                     {loading ? <Spinner variant="light" size="sm" /> : <span className="underline underline-offset-2">Login</span>}
-                </button>
-                <button
-                    type="button"
-                    onClick={handleResend}
-                    className="w-full text-sm text-violet-700 font-semibold hover:text-violet-900 transition-colors"
-                >
-                    Reenviar email de verificación
                 </button>
             </form>
         </div>

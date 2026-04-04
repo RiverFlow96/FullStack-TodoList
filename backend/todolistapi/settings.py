@@ -205,14 +205,6 @@ SPECTACULAR_SETTINGS = {
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-FRONTEND_URL = env_str("FRONTEND_URL", "http://localhost:5173")
-
-EMAIL_PROVIDER = env_str("EMAIL_PROVIDER", "smtp").lower()
-RESEND_API_KEY = env_str("RESEND_API_KEY", "")
-RESEND_API_URL = env_str("RESEND_API_URL", "https://api.resend.com/emails")
-BREVO_API_KEY = env_str("BREVO_API_KEY", "")
-BREVO_API_URL = env_str("BREVO_API_URL", "https://api.brevo.com/v3/smtp/email")
-
 EMAIL_BACKEND = env_str("EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend")
 EMAIL_HOST = env_str("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
