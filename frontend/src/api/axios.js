@@ -161,11 +161,24 @@ export const updateTask = async (taskData, taskId) => {
 
 export const deleteTask = async (taskId) => {
     try {
-        await api.delete(`tasks/${taskId}`)
+        await api.delete(`tasks/${taskId}/`)
         return true
     } catch (error) {
         console.error('Error deleting task: ', error)
         throw error
+    }
+}
+
+export const suggestTaskWithAI = async ({ prompt, context }) => {
+    try {
+        const response = await api.post("ai/suggest-task/", {
+            prompt,
+            context,
+        })
+        return response.data
+    } catch (error) {
+        const detail = error?.response?.data?.detail
+        throw new Error(detail || "No se pudo generar la sugerencia con IA")
     }
 }
 

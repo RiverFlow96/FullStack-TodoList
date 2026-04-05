@@ -1,5 +1,5 @@
 import { ArrowLeft, Save } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { TaskSchema } from "../utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,8 +12,22 @@ function AddTaskPage() {
 
     const { addTask, loading: storeLoading } = useTaskStore()
     const [loading, setLoading] = useState(false)
+    const location = useLocation()
+    const initialSuggestion = location.state?.aiSuggestion
+    const [aiMeta] = useState(
+        initialSuggestion
+            ? {
+                priority: initialSuggestion.priority || "medium",
+                tags: initialSuggestion.tags || [],
+            }
+            : null
+    )
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
+        defaultValues: {
+            title: initialSuggestion?.title || "",
+            description: initialSuggestion?.description || "",
+        },
         resolver: zodResolver(TaskSchema)
     })
 
@@ -57,6 +71,15 @@ function AddTaskPage() {
                 </div>
 
                 <div className='w-full p-8'>
+                    {aiMeta && (
+                        <div className="mb-4 p-3 rounded-lg bg-indigo-50 border border-indigo-100">
+                            <p className="text-sm font-semibold text-indigo-700">Sugerencia IA aplicada</p>
+                            <p className="text-xs text-indigo-600 mt-1">Priority: {aiMeta.priority}</p>
+                            {aiMeta.tags.length > 0 && (
+                                <p className="text-xs text-indigo-600 mt-1">Tags: {aiMeta.tags.join(", ")}</p>
+                            )}
+                        </div>
+                    )}
                     <form onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-col gap-5'>
                         <div className='flex flex-col w-full'>
                             <p className="font-bold text-xl mb-2">Title: </p>

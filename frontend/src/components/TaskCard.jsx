@@ -3,7 +3,7 @@ import { useTaskStore } from "../store/useStore";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
-function TaskCard({ title, description, completed, created_at, updated_at, id }) {
+function TaskCard({ title, description, completed, created_at, id }) {
 
     const { editTask, removeTask } = useTaskStore()
     const navigate = useNavigate()
