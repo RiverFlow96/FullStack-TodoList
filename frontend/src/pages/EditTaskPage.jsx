@@ -25,7 +25,7 @@ function EditTaskPage() {
             setLoadingTask(false)
         }
         loadTask()
-    }, [])
+    }, [fetchTasks, tasks])
 
     useEffect(() => {
         if (id && tasks.length > 0) {

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { TaskSchema } from "../utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTaskStore } from "../store/useStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 
@@ -12,28 +12,26 @@ function AddTaskPage() {
 
     const { addTask, loading: storeLoading } = useTaskStore()
     const [loading, setLoading] = useState(false)
-    const [aiMeta, setAiMeta] = useState(null)
     const location = useLocation()
+    const initialSuggestion = location.state?.aiSuggestion
+    const [aiMeta] = useState(
+        initialSuggestion
+            ? {
+                priority: initialSuggestion.priority || "medium",
+                tags: initialSuggestion.tags || [],
+            }
+            : null
+    )
 
-    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
+    const { register, handleSubmit, reset, formState: { errors } } = useForm({
+        defaultValues: {
+            title: initialSuggestion?.title || "",
+            description: initialSuggestion?.description || "",
+        },
         resolver: zodResolver(TaskSchema)
     })
 
     const navigate = useNavigate()
-
-    useEffect(() => {
-        const suggestion = location.state?.aiSuggestion
-        if (!suggestion) return
-
-        setValue("title", suggestion.title || "")
-        setValue("description", suggestion.description || "")
-        setAiMeta({
-            priority: suggestion.priority || "medium",
-            tags: suggestion.tags || [],
-        })
-        toast.success("Sugerencia IA cargada en el formulario")
-        navigate(location.pathname, { replace: true, state: {} })
-    }, [location.pathname, location.state, navigate, setValue])
 
     const onSubmit = async (data) => {
         console.log("Submit triggered with data:", data)

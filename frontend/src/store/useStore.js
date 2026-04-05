@@ -1,7 +1,6 @@
 import { create } from "zustand";
-import { createTask, fetchTasks, updateTask, deleteTask, logout } from "../api/axios";
+import { createTask, fetchTasks, updateTask, deleteTask } from "../api/axios";
 import { login as apiLogin, logout as apiLogout, register as apiRegister } from "../api/axios";
-import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
     user: null,

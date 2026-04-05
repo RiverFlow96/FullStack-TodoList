@@ -10,7 +10,7 @@ function ProfileLayout() {
 
     useEffect(() => {
         fetchTasks()
-    }, [])
+    }, [fetchTasks])
 
     const completedTasks = tasks.filter(t => t.completed).length
     const pendingTasks = tasks.filter(t => !t.completed).length

@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 
-function AuthPage({ layout }) {
+function AuthPage() {
 
     return (
         <div className="min-h-dvh w-full grid place-items-center font-mono bg-gray-100 px-4 py-6 sm:px-6">

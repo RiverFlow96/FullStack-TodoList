@@ -16,7 +16,7 @@ export function TaskLayout() {
 
     useEffect(() => {
         fetchTasks()
-    }, [])
+    }, [fetchTasks])
 
     // Filtrar y ordenar tareas
     const processTasks = (tasksToProcess) => {
