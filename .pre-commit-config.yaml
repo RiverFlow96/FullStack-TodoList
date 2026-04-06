@@ -66,11 +66,14 @@ repos:
         pass_filenames: false
 
   # Django migrations check
-  - repo: local
-    hooks:
-      - id: migrations-check
-        name: Check for uncreated migrations
-        entry: python backend/manage.py makemigrations --check --dry-run
-        language: system
-        files: ^backend/.*models\.py$
-        pass_filenames: false
+  # Disabled: Requires Django to be installed in the pre-commit environment
+  # DMsuDev Note: I don't want to add Django as a dependency for pre-commit just to check for uncreated migrations, so this hook is disabled. Instead, use `make migrate` locally to check for uncreated migrations before committing.
+  # Use `make migrate` locally to check for uncreated migrations
+  # - repo: local
+  #   hooks:
+  #     - id: migrations-check
+  #       name: Check for uncreated migrations
+  #       entry: python backend/manage.py makemigrations --check --dry-run
+  #       language: system
+  #       files: ^backend/.*models\.py$
+  #       pass_filenames: false
