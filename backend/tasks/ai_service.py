@@ -1,6 +1,5 @@
 import json
 import os
-import socket
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -96,18 +95,18 @@ def _http_json_request(url, payload, headers):
         raise AIServiceError(f"Provider request failed: {response_body[:500]}") from exc
     except urllib.error.URLError as exc:
         raise ProviderTimeoutError("Provider request timed out") from exc
-    except socket.timeout as exc:
+    except TimeoutError as exc:
         raise ProviderTimeoutError("Provider request timed out") from exc
 
 
 def _parse_json_content(text):
     try:
         return json.loads(text)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as exc:
         start = text.find("{")
         end = text.rfind("}")
         if start == -1 or end == -1 or end <= start:
-            raise AIServiceError("Provider returned non-JSON content")
+            raise AIServiceError("Provider returned non-JSON content") from exc
         fragment = text[start : end + 1]
         try:
             return json.loads(fragment)
