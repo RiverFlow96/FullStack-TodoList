@@ -14,7 +14,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(write_only=True, required=False)
     email = serializers.EmailField(required=True)
 
     class Meta:
@@ -24,14 +24,31 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         email = value.strip().lower()
-        if User.objects.filter(email__iexact=email).exists():
+        existing_user = User.objects.filter(email__iexact=email)
+        if self.instance is not None:
+            existing_user = existing_user.exclude(pk=self.instance.pk)
+        if existing_user.exists():
             raise serializers.ValidationError("Este email ya está registrado")
         return email
+
+    def validate(self, attrs):
+        if self.instance is None and not attrs.get("password"):
+            raise serializers.ValidationError({"password": "La contraseña es obligatoria"})
+        return attrs
 
     def create(self, validated_data):
         password = validated_data.pop("password", None)
         instance = self.Meta.model(**validated_data)
         if password is not None:
+            instance.set_password(password)
+        instance.save()
+        return instance
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop("password", None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if password:
             instance.set_password(password)
         instance.save()
         return instance
