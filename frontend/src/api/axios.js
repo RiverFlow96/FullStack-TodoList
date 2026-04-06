@@ -1,5 +1,4 @@
 import axios from "axios";
-import toast from "react-hot-toast";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/api/"
 const API_AUTH_URL = API_URL.replace(/\/api\/?$/, "/api-auth/")
@@ -196,8 +195,21 @@ export const register = async (userData) => {
             detail: response.data.detail,
         }
     } catch (error) {
-        toast.error(error.response?.data?.detail || "Error registering user")
-        throw error
+        const data = error?.response?.data
+
+        if (data?.email?.[0]) {
+            throw new Error(data.email[0])
+        }
+
+        if (data?.username?.[0]) {
+            throw new Error(data.username[0])
+        }
+
+        if (typeof data?.detail === "string" && data.detail.trim()) {
+            throw new Error(data.detail)
+        }
+
+        throw new Error("Error registering user")
     }
 }
 
