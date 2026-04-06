@@ -4,6 +4,7 @@ Django settings for todolistapi project.
 
 from pathlib import Path
 import os
+from urllib.parse import urlsplit
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -16,6 +17,22 @@ def env_str(name, default=""):
     if not isinstance(value, str):
         return value
     return value.strip().strip('"').strip("'")
+
+
+def parse_env_list(name):
+    return [item.strip() for item in env_str(name, "").split(",") if item.strip()]
+
+
+def normalize_origin(origin):
+    value = origin.strip().strip('"').strip("'")
+    if not value:
+        return ""
+
+    parts = urlsplit(value)
+    if parts.scheme and parts.netloc:
+        return f"{parts.scheme}://{parts.netloc}".rstrip("/")
+
+    return value.rstrip("/")
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -166,20 +183,21 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # CORS configuration for production
 cors_origins = [
-    origin.strip().strip('"').strip("'")
-    for origin in env_str("CORS_ALLOWED_ORIGINS", "").split(",")
-    if origin.strip().strip('"').strip("'")
+    normalize_origin(origin) for origin in parse_env_list("CORS_ALLOWED_ORIGINS")
 ]
-if cors_origins:
+cors_origin_regexes = parse_env_list("CORS_ALLOWED_ORIGIN_REGEXES")
+
+if cors_origins or cors_origin_regexes:
     CORS_ALLOW_ALL_ORIGINS = False
-    CORS_ALLOWED_ORIGINS = cors_origins
+    if cors_origins:
+        CORS_ALLOWED_ORIGINS = cors_origins
+    if cors_origin_regexes:
+        CORS_ALLOWED_ORIGIN_REGEXES = cors_origin_regexes
 else:
     CORS_ALLOW_ALL_ORIGINS = True
 
 CSRF_TRUSTED_ORIGINS = [
-    origin.strip().strip('"').strip("'")
-    for origin in env_str("CSRF_TRUSTED_ORIGINS", "").split(",")
-    if origin.strip().strip('"').strip("'")
+    normalize_origin(origin) for origin in parse_env_list("CSRF_TRUSTED_ORIGINS")
 ]
 
 REST_FRAMEWORK = {
