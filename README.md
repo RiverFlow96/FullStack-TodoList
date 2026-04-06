@@ -1,9 +1,13 @@
 # ToDo List App
 
+<!-- Mejoras del README por @DMsuDev -->
+
 [Readme Español](https://github.com/RiverFlow96/FullStack-TodoList/blob/main/README.md)
  • [English Readme](https://github.com/RiverFlow96/FullStack-TodoList/blob/main/README.en.md)
 
 Aplicación web fullstack para gestión de tareas con autenticación de usuarios. Permite crear, editar, completar y eliminar tareas personales.
+
+Este proyecto es parte de mi portafolio personal y está diseñado para demostrar mis habilidades en desarrollo web fullstack, incluyendo la creación de `APIs REST` con `Django` y el desarrollo de interfaces de usuario con `React`.
 
 ![Captura de la app](frontend/public/Screenshot.png)
 
@@ -55,7 +59,7 @@ FullStack/
 
 | Tecnología            | Uso               |
 | --------------------- | ----------------- |
-| Django 5              | Framework backend |
+| Django 6              | Framework backend |
 | Django REST Framework | API REST          |
 | SQLite / PostgreSQL   | Base de datos     |
 
@@ -79,7 +83,7 @@ source .venv/bin/activate # Linux/macOS
 2 - Instala las dependencias
 
 ```bash
-pip install -r requirements.txt
+pip install -e "../[dev]"
 ```
 
 3 - Aplicar las migraciones
@@ -120,6 +124,10 @@ La aplicación estará disponible en http://localhost:5173
 
 </details>
 
+<br>
+
+> **Nota para desarrollo:** Se incluye un `Makefile` para facilitar las tareas comunes. Ejecuta `make help` para ver todos los comandos disponibles (crear entorno, ejecutar servidor, lint, tests, etc.).
+
 ## Deploy en Producción
 
 <details>
@@ -130,7 +138,7 @@ La aplicación estará disponible en http://localhost:5173
 | Propiedad     | Valor                                                        |
 | ------------- | ------------------------------------------------------------ |
 | Root          | `backend/`                                                   |
-| Build command | `./build.sh`                                                 |
+| Build command | `./scripts/build_backend.sh`                                 |
 | Start command | `gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT` |
 
 ### Variables de entorno
@@ -204,3 +212,9 @@ El archivo `frontend/public/_redirects` está configurado para redirigir todas l
 | POST   | `/api/tasks/`      | Crear tarea              |
 | PUT    | `/api/tasks/{id}/` | Actualizar tarea         |
 | DELETE | `/api/tasks/{id}/` | Eliminar tarea           |
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+
+> En colaboración con [@DMsuDev](https://github.com/DMsuDev)

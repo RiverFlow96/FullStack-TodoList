@@ -1,9 +1,13 @@
 # ToDo List App
 
+<!-- README improvements by @DMsuDev.... Ongoing -->
+
 [Readme Español](https://github.com/RiverFlow96/FullStack-TodoList/blob/main/README.md)
  • [English Readme](https://github.com/RiverFlow96/FullStack-TodoList/blob/main/README.en.md)
 
 A fullstack web application for task management with user authentication. Allows users to create, edit, complete, and delete personal tasks.
+
+This project is part of my personal portfolio and is designed to demonstrate my skills in fullstack web development, including creating `REST APIs` with `Django` and developing user interfaces with `React`.
 
 ![App Screenshot](frontend/public/Screenshot.png)
 
@@ -55,7 +59,7 @@ FullStack/
 
 | Technology            | Purpose           |
 | --------------------- | ----------------- |
-| Django 5              | Backend framework |
+| Django 6              | Backend framework |
 | Django REST Framework | REST API          |
 | SQLite / PostgreSQL   | Database          |
 
@@ -79,7 +83,7 @@ source .venv/bin/activate # Linux/macOS
 2 - Install dependencies
 
 ```bash
-pip install -r requirements.txt
+pip install -e "../[dev]"
 ```
 
 3 - Apply migrations
@@ -120,6 +124,10 @@ The application will be available at http://localhost:5173
 
 </details>
 
+<br>
+
+> **Development Note:** A `Makefile` is included to simplify common tasks. Run `make help` to see all available commands (create environment, run server, lint, tests, etc.).
+
 ## Production Deploy
 
 <details>
@@ -130,7 +138,7 @@ The application will be available at http://localhost:5173
 | Property      | Value                                                        |
 | ------------- | ------------------------------------------------------------ |
 | Root          | `backend/`                                                   |
-| Build command | `./build.sh`                                                 |
+| Build command | `./scripts/build_backend.sh`                                 |
 | Start command | `gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT` |
 
 ### Environment Variables
@@ -204,3 +212,9 @@ The `frontend/public/_redirects` file is configured to redirect all routes to `i
 | POST   | `/api/tasks/`      | Create task       |
 | PUT    | `/api/tasks/{id}/` | Update task       |
 | DELETE | `/api/tasks/{id}/` | Delete task       |
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+> In collaboration with [@DMsuDev](https://github.com/DMsuDev)
