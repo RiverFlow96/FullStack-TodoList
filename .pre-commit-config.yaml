@@ -24,7 +24,6 @@ repos:
         args: ['--maxkb=500']
       - id: check-merge-conflict # Detect merge conflict markers
       - id: mixed-line-ending # Detect mixed line endings
-        args: ['--fix=lf'] # Normalize to LF line endings
       - id: check-case-conflict # Detect files that would conflict on case-insensitive filesystems
       #- id: detect-private-key # Prevent committing private keys (....i not sure if this is useful in this state of the project, but it can be enabled later if needed)
 
