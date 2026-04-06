@@ -3,7 +3,7 @@ services:
     name: fullstack-todolist-backend
     env: python
     rootDir: backend
-    buildCommand: ./build.sh
+    buildCommand: ./scripts/build_backend.sh
     startCommand: gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DEBUG
