@@ -130,6 +130,7 @@ select = [
 ignore = [
     "E501",  # line too long (handled by formatter)
     "B008",  # do not perform function calls in argument defaults
+    "RUF012",  # Django Meta class attributes (false positive)
 ]
 
 [tool.ruff.lint.isort]
