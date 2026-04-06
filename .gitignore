@@ -55,4 +55,5 @@ Thumbs.db
 .ruff_cache/
 
 # Project specific
-TODO.md
+temp/
+.copilot-commit-message-instructions.md
