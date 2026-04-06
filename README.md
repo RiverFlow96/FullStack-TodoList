@@ -1,46 +1,25 @@
-# ToDo List - FullStack App
+# ToDo List App
 
-> Aplicación web fullstack para gestión de tareas con autenticación de usuarios.
+[Readme Español](https://github.com/RiverFlow96/FullStack-TodoList/blob/main/README.md)
+ • [English Readme](https://github.com/RiverFlow96/FullStack-TodoList/blob/main/README.en.md)
 
-## Demo
+Aplicación web fullstack para gestión de tareas con autenticación de usuarios. Permite crear, editar, completar y eliminar tareas personales.
 
 ![Captura de la app](frontend/public/Screenshot.png)
 
-## Qué hace esta aplicación
+## Características
 
-Permite a los usuarios crear, editar, completar y eliminar tareas personales. Cada usuario gestiona sus propias tareas con autenticación segura.
-
-## Stack Tecnológico
-
-**Frontend**
-<p align="left">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=react,vite,tailwind,zustand" />
-  </a>
-</p>
-
-- **React 19** — Interfaz de usuario
-- **Vite** — Build tool y dev server
-- **Tailwind CSS 4** — Estilos
-- **Zustand** — Estado global
-- **React Router 7** — Navegación
-- **React Hook Form + Zod** — Validación de formularios
-- **Axios** — Cliente HTTP
-
-**Backend**
-<p align="left">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=django,python,sqlite" />
-  </a>
-</p>
-
-- **Django 5** — Framework backend
-- **Django REST Framework** — API REST
-- **SQLite** — Base de datos
+- **Autenticación segura** Registro e inicio de sesión
+- **Gestión completa de tareas** Crear, editar, completar y eliminar en tiempo real `(CRUD)`
+- **Control de estado** Marcar tareas como completadas o no completadas
+- **Rutas protegidas** Acceso exclusivo para usuarios autenticados
+- **Validación robusta** Formularios validados con esquemas `Zod`
+- **Diseño responsive** Interfaz adaptable con `Tailwind CSS` en todos los dispositivos
+- **Estado global** Manejo eficiente con `Zustand`
 
 ## Estructura del proyecto
 
-```
+```graph
 FullStack/
 ├── backend/           # API REST con Django
 │   ├── todolistapi/   # Configuración principal
@@ -54,89 +33,174 @@ FullStack/
         └── utils/         # Esquemas Zod
 ```
 
-## Getting Started
+## Tecnologías
+
+### Frontend
+
+![Frontend Stack](https://skillicons.dev/icons?i=react,vite,tailwind)
+
+| Tecnología            | Uso                       |
+| --------------------- | ------------------------- |
+| React 19              | Interfaz de usuario       |
+| Vite                  | Build tool y dev server   |
+| Tailwind CSS 4        | Estilos                   |
+| Zustand               | Estado global             |
+| React Router 7        | Navegación                |
+| React Hook Form + Zod | Validación de formularios |
+| Axios                 | Cliente HTTP              |
 
 ### Backend
+
+![Backend Stack](https://skillicons.dev/icons?i=django,python,postgresql)
+
+| Tecnología            | Uso               |
+| --------------------- | ----------------- |
+| Django 5              | Framework backend |
+| Django REST Framework | API REST          |
+| SQLite / PostgreSQL   | Base de datos     |
+
+## Instalación
+
+<details>
+<summary><strong>Backend</strong></summary>
+
+<br>
+
+1 - Entrar al directorio y crear/activar el entorno virtual
 
 ```bash
 cd backend
 python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# .venv\Scripts\Activate   # Windows
+
+source .venv/bin/activate # Linux/macOS
+.venv\Scripts\Activate.ps1 # Windows
+```
+
+2 - Instala las dependencias
+
+```bash
 pip install -r requirements.txt
+```
+
+3 - Aplicar las migraciones
+
+```bash
 python manage.py migrate
+```
+
+4 - Iniciar el servidor
+
+```bash
 python manage.py runserver
 ```
 
-### Frontend
+El servidor estará disponible en http://localhost:8000
+
+</details>
+
+<details>
+<summary><strong>Frontend</strong></summary>
+
+<br>
+
+1 - Entrar al directorio e instalar dependencias
 
 ```bash
 cd frontend
 npm install
+```
+
+2 - Inicia el servidor de desarrollo
+
+```bash
 npm run dev
 ```
 
-Abre http://localhost:5173
+La aplicación estará disponible en http://localhost:5173
 
-## Deploy (Render + Supabase + Cloudflare)
+</details>
 
-### 1) Backend en Render
+## Deploy en Producción
 
-- Root del servicio: `backend/`
-- Build command: `./build.sh`
-- Start command: `gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT`
-- También puedes usar `render.yaml` en la raíz para autoconfigurar.
+<details>
+<summary><strong>Backend en Render</strong></summary>
 
-Variables mínimas en Render:
+### Configuración del servicio
 
-- `SECRET_KEY`
-- `DEBUG=False`
-- `DATABASE_URL` (cadena de conexión de Supabase)
-- `ALLOWED_HOSTS=tu-backend.onrender.com`
-- `CORS_ALLOWED_ORIGINS=https://tu-frontend.pages.dev`
-- `CSRF_TRUSTED_ORIGINS=https://tu-backend.onrender.com`
+| Propiedad     | Valor                                                        |
+| ------------- | ------------------------------------------------------------ |
+| Root          | `backend/`                                                   |
+| Build command | `./build.sh`                                                 |
+| Start command | `gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT` |
 
-### 2) Base de datos en Supabase (PostgreSQL)
+### Variables de entorno
 
-- Crea un proyecto en Supabase.
-- Copia la URL de conexión PostgreSQL y pégala en `DATABASE_URL` de Render.
-- Ejecuta migraciones (Render lo hace en `build.sh` con `python manage.py migrate`).
+| Variable               | Valor                                                          |
+| ---------------------- | -------------------------------------------------------------- |
+| `SECRET_KEY`           | `tu-clave-secreta-muy-larga`                                   |
+| `DEBUG`                | `False`                                                        |
+| `DATABASE_URL`         | `postgresql://usuario:contraseña@db.supabase.co:5432/postgres` |
+| `ALLOWED_HOSTS`        | `tu-backend.onrender.com`                                      |
+| `CORS_ALLOWED_ORIGINS` | `https://tu-frontend.pages.dev`                                |
+| `CSRF_TRUSTED_ORIGINS` | `https://tu-backend.onrender.com`                              |
 
-### 3) Frontend en Cloudflare Pages
+> Tip: Puedes usar `render.yaml` en la raíz del proyecto para automatizar la configuración
 
-- Project root: `frontend/`
-- Build command: `npm run build` (o `bun run build`)
-- Output directory: `dist`
-- Env var: `VITE_API_URL=https://tu-backend.onrender.com/api/`
+</details>
 
-Se incluye `frontend/public/_redirects` con `/* /index.html 200` para soportar rutas SPA de React Router.
+<details>
+<summary><strong>Base de datos en Supabase</strong></summary>
+
+### Configuración de la base de datos
+
+Para la base de datos, utilizaremos Supabase, que ofrece una solución PostgreSQL gestionada y fácil de integrar con Render.
+
+1. Crea un nuevo proyecto en [Supabase](https://supabase.com)
+2. Obtén la URL de conexión PostgreSQL desde **Settings > Database**
+3. Copia la URL en la variable `DATABASE_URL` de tu servicio Render
+4. Las migraciones se ejecutan automáticamente en `build.sh`
+
+```bash
+python manage.py migrate  # Se ejecuta en el build
+```
+
+</details>
+
+<details>
+<summary><strong>Frontend en Cloudflare Pages</strong></summary>
+
+#### Configuración del proyecto
+
+| Propiedad        | Valor           |
+| ---------------- | --------------- |
+| Project root     | `frontend/`     |
+| Build command    | `npm run build` |
+| Output directory | `dist`          |
+
+#### Variables de entorno
+
+| Variable       | Valor                                  |
+| -------------- | -------------------------------------- |
+| `VITE_API_URL` | `https://tu-backend.onrender.com/api/` |
+
+#### Soporte para rutas SPA
+
+El archivo `frontend/public/_redirects` está configurado para redirigir todas las rutas a `index.html`, permitiendo que React Router maneje la navegación.
+
+```bash
+/* /index.html 200
+```
+
+</details>
 
 ## API Endpoints
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/api/users/` | Registro de usuario |
-| POST | `/api/auth/login/` | Login |
-| GET | `/api/users/me/` | Datos del usuario actual |
-| GET | `/api/tasks/` | Listar tareas |
-| POST | `/api/tasks/` | Crear tarea |
-| PUT | `/api/tasks/{id}/` | Actualizar tarea |
-| DELETE | `/api/tasks/{id}/` | Eliminar tarea |
-
-## Características
-
-- Autenticación de usuarios (registro/login)
-- CRUD completo de tareas
-- Estado de completada/no completada
-- Rutas protegidas
-- Validación de formularios con Zod
-- Diseño responsivo con Tailwind CSS
-- Estado global con Zustand
-
-## Aprendido
-
-- Integración Django REST + React
-- Autenticación JWT con Django
-- Zustand para estado global en React
-- Tailwind CSS v4
-- React Router v7
+| Método | Endpoint           | Descripción              |
+| ------ | ------------------ | ------------------------ |
+| POST   | `/api/users/`      | Registro de usuario      |
+| POST   | `/api/auth/login/` | Login                    |
+| GET    | `/api/users/me/`   | Datos del usuario actual |
+| GET    | `/api/tasks/`      | Listar tareas            |
+| POST   | `/api/tasks/`      | Crear tarea              |
+| PUT    | `/api/tasks/{id}/` | Actualizar tarea         |
+| DELETE | `/api/tasks/{id}/` | Eliminar tarea           |
