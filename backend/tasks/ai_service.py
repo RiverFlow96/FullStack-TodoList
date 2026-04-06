@@ -57,7 +57,7 @@ def _build_prompt(prompt, existing_tasks):
     return (
         "Eres un asistente para planificar tareas. Devuelve UNICAMENTE un JSON valido "
         "sin markdown ni texto extra con esta forma exacta: "
-        '{"title":"string","description":"string",'
+        '{"title":"string","description":"string"'
         '"subtasks":["string"]}. '
         "Debes responder en espanol simple y util para el usuario. "
         "Si faltan datos, haz una mejor suposicion razonable. "
