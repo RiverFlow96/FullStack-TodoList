@@ -137,8 +137,13 @@ class AISuggestTaskAPIView(APIView):
             )
         except ProviderAuthError as exc:
             logger.warning("AI provider auth error: %s", exc)
+            response_payload = {
+                "detail": "Credenciales IA invalidas o sin permisos en el proveedor."
+            }
+            if settings.DEBUG:
+                response_payload["debug"] = str(exc)
             return Response(
-                {"detail": "Credenciales IA invalidas o sin permisos en el proveedor."},
+                response_payload,
                 status=status.HTTP_502_BAD_GATEWAY,
             )
         except AIServiceError as exc:

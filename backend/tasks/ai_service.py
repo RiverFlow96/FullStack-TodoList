@@ -77,11 +77,19 @@ def _http_json_request(url, payload, headers):
             return json.loads(raw)
     except urllib.error.HTTPError as exc:
         response_body = exc.read().decode("utf-8", errors="ignore")
+        lowered_body = response_body.lower()
         if exc.code == 429:
             raise ProviderQuotaError("Provider quota exceeded") from exc
+        if exc.code == 400 and any(
+            text in lowered_body
+            for text in ("api key", "invalid key", "unauthorized", "permission")
+        ):
+            raise ProviderAuthError(
+                f"Provider authentication/authorization failed: {response_body[:400]}"
+            ) from exc
         if exc.code in (401, 403):
             raise ProviderAuthError(
-                "Provider authentication/authorization failed"
+                f"Provider authentication/authorization failed: {response_body[:400]}"
             ) from exc
         if exc.code >= 500:
             raise AIServiceError("Provider server error") from exc
