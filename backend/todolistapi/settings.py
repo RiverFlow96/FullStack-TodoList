@@ -2,12 +2,12 @@
 Django settings for todolistapi project.
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
 from urllib.parse import urlsplit
-from dotenv import load_dotenv
-import dj_database_url
 
+import dj_database_url
+from dotenv import load_dotenv
 
 load_dotenv()
 

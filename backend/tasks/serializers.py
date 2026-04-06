@@ -1,7 +1,8 @@
 # Un serializer es utilizado para exportar la informacion de los modelos como formato JSON a la API
-from rest_framework import serializers
-from .models import Task
 from django.contrib.auth.models import User
+from rest_framework import serializers
+
+from .models import Task
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -33,7 +34,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if self.instance is None and not attrs.get("password"):
-            raise serializers.ValidationError({"password": "La contraseña es obligatoria"})
+            raise serializers.ValidationError(
+                {"password": "La contraseña es obligatoria"}
+            )
         return attrs
 
     def create(self, validated_data):
