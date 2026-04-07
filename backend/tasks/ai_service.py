@@ -252,6 +252,43 @@ class AzureOpenAIProvider(BaseLLMProvider):
         return _normalize_response(parsed)
 
 
+class OpenRouterProvider(BaseLLMProvider):
+    def __init__(self):
+        self.api_key = _env_str("OPENROUTER_API_KEY")
+        self.model = _env_str(
+            "OPENROUTER_MODEL", "meta-llama/Llama-3.1-8b-instruct:free"
+        )
+        self.site_url = _env_str("OPENROUTER_SITE_URL", "http://localhost:8000")
+        self.app_name = _env_str("OPENROUTER_APP_NAME", "Fullstack TodoList")
+        if not self.api_key:
+            raise ProviderNotConfiguredError("OPENROUTER_API_KEY is not configured")
+
+    def suggest_task(self, prompt, existing_tasks):
+        url = "https://openrouter.ai/api/v1/chat/completions"
+        payload = {
+            "model": self.model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "Responde siempre en JSON valido con la estructura solicitada.",
+                },
+                {"role": "user", "content": _build_prompt(prompt, existing_tasks)},
+            ],
+            "temperature": 0.3,
+            "response_format": {"type": "json_object"},
+        }
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": self.site_url,
+            "X-Title": self.app_name,
+        }
+        response = _http_json_request(url, payload, headers)
+        content = response["choices"][0]["message"]["content"]
+        parsed = _parse_json_content(content)
+        return _normalize_response(parsed)
+
+
 def _get_provider(provider_name):
     normalized = (provider_name or "").strip().lower()
     if normalized == "openai":
@@ -260,6 +297,8 @@ def _get_provider(provider_name):
         return GeminiProvider()
     if normalized == "azure":
         return AzureOpenAIProvider()
+    if normalized == "openrouter":
+        return OpenRouterProvider()
     raise ProviderNotConfiguredError("LLM_PROVIDER must be openai, gemini, or azure")
 
 
