@@ -7,7 +7,7 @@ name = "fullstack-todolist"
 version = "1.0.0"
 description = "API REST para gestionar tareas y usuarios con autenticación JWT"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12,<3.14"
 license = { file = "LICENSE" }
 authors = [
     {name = "DMsuDev"},
