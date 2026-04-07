@@ -9,32 +9,45 @@ Aplicación web fullstack para gestión de tareas con autenticación de usuarios
 
 Este proyecto es parte de mi portafolio personal y está diseñado para demostrar mis habilidades en desarrollo web fullstack, incluyendo la creación de `APIs REST` con `Django` y el desarrollo de interfaces de usuario con `React`.
 
-![Captura de la app](frontend/public/Screenshot.png)
+<p align="center">
+  <img src="frontend/public/Screenshot.png" alt="Captura de la app" width="700">
+</p>
 
 ## Características
 
-- **Autenticación segura** Registro e inicio de sesión
+- **Autenticación segura** Registro e inicio de sesión con JWT (access + refresh tokens)
 - **Gestión completa de tareas** Crear, editar, completar y eliminar en tiempo real `(CRUD)`
 - **Control de estado** Marcar tareas como completadas o no completadas
+- **Asistente IA** Sugerencias de tareas con IA integrada (OpenRouter / LLM)
 - **Rutas protegidas** Acceso exclusivo para usuarios autenticados
 - **Validación robusta** Formularios validados con esquemas `Zod`
 - **Diseño responsive** Interfaz adaptable con `Tailwind CSS` en todos los dispositivos
 - **Estado global** Manejo eficiente con `Zustand`
+- **Documentación API** Swagger UI y ReDoc auto-generados con `drf-spectacular`
 
 ## Estructura del proyecto
 
 ```graph
-FullStack/
-├── backend/           # API REST con Django
-│   ├── todolistapi/   # Configuración principal
-│   └── tasks/         # App de tareas (models, views, serializers)
-└── frontend/          # App React
-    └── src/
-        ├── components/    # Componentes reutilizables
-        ├── layouts/       # Layouts de página
-        ├── pages/         # Páginas principales
-        ├── store/         # Zustand store
-        └── utils/         # Esquemas Zod
+FullStack-TodoList/
+├── Makefile               # Automatización de tareas (make help)
+├── backend/               # API REST con Django
+│   ├── config/            # Configuración principal
+│   │   └── settings/      # Settings por entorno (development / production)
+│   ├── apps/
+│   │   ├── accounts/      # Autenticación y usuarios
+│   │   ├── assistant/     # Asistente IA
+│   │   ├── core/          # Utilidades compartidas
+│   │   └── tasks/         # App de tareas (models, views, serializers)
+│   └── scripts/           # Scripts de build y utilidades
+├── frontend/              # App React
+│   └── src/
+│       ├── api/           # Cliente HTTP (Axios)
+│       ├── components/    # Componentes reutilizables
+│       ├── layouts/       # Layouts de página
+│       ├── pages/         # Páginas principales
+│       ├── store/         # Zustand store
+│       └── utils/         # Esquemas Zod
+└── scripts/               # Scripts de setup del entorno
 ```
 
 ## Tecnologías
@@ -64,6 +77,20 @@ FullStack/
 | SQLite / PostgreSQL   | Base de datos     |
 
 ## Instalación
+
+### Con Makefile (recomendado)
+
+```bash
+make build-venv        # Crear entorno virtual e instalar dependencias
+make migrate           # Aplicar migraciones
+make runserver         # Iniciar backend en http://localhost:8000
+make frontend-install  # Instalar dependencias del frontend
+make frontend-dev      # Iniciar frontend en http://localhost:5173
+```
+
+> Ejecuta `make help` para ver todos los comandos disponibles.
+
+### Manual
 
 <details>
 <summary><strong>Backend</strong></summary>
@@ -124,9 +151,20 @@ La aplicación estará disponible en http://localhost:5173
 
 </details>
 
-<br>
+### Cambiar entorno de Django
 
-> **Nota para desarrollo:** Se incluye un `Makefile` para facilitar las tareas comunes. Ejecuta `make help` para ver todos los comandos disponibles (crear entorno, ejecutar servidor, lint, tests, etc.).
+Por defecto se usa `development`. Para cambiar a producción:
+
+```bash
+# Vía Makefile
+make runserver DJANGO_ENV=production
+
+# Manual (Linux/macOS)
+export DJANGO_SETTINGS_MODULE=config.settings.production
+
+# Manual (Windows PowerShell)
+$env:DJANGO_SETTINGS_MODULE = "config.settings.production"
+```
 
 ## Deploy en Producción
 
@@ -139,18 +177,19 @@ La aplicación estará disponible en http://localhost:5173
 | ------------- | ------------------------------------------------------------ |
 | Root          | `backend/`                                                   |
 | Build command | `./scripts/build_backend.sh`                                 |
-| Start command | `gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT` |
+| Start command | `gunicorn config.wsgi:application --bind 0.0.0.0:$PORT` |
 
 ### Variables de entorno
 
-| Variable               | Valor                                                          |
-| ---------------------- | -------------------------------------------------------------- |
-| `SECRET_KEY`           | `tu-clave-secreta-muy-larga`                                   |
-| `DEBUG`                | `False`                                                        |
-| `DATABASE_URL`         | `postgresql://usuario:contraseña@db.supabase.co:5432/postgres` |
-| `ALLOWED_HOSTS`        | `tu-backend.onrender.com`                                      |
-| `CORS_ALLOWED_ORIGINS` | `https://tu-frontend.pages.dev`                                |
-| `CSRF_TRUSTED_ORIGINS` | `https://tu-backend.onrender.com`                              |
+| Variable                 | Valor                                                          |
+| ------------------------ | -------------------------------------------------------------- |
+| `DJANGO_SETTINGS_MODULE` | `config.settings.production`                                   |
+| `SECRET_KEY`             | `tu-clave-secreta-muy-larga`                                   |
+| `DEBUG`                  | `False`                                                        |
+| `DATABASE_URL`           | `postgresql://usuario:contraseña@db.supabase.co:5432/postgres` |
+| `ALLOWED_HOSTS`          | `tu-backend.onrender.com`                                      |
+| `CORS_ALLOWED_ORIGINS`   | `https://tu-frontend.pages.dev`                                |
+| `CSRF_TRUSTED_ORIGINS`   | `https://tu-backend.onrender.com`                              |
 
 > Tip: Puedes usar `render.yaml` en la raíz del proyecto para automatizar la configuración
 
@@ -203,15 +242,22 @@ El archivo `frontend/public/_redirects` está configurado para redirigir todas l
 
 ## API Endpoints
 
-| Método | Endpoint           | Descripción              |
-| ------ | ------------------ | ------------------------ |
-| POST   | `/api/users/`      | Registro de usuario      |
-| POST   | `/api/auth/login/` | Login                    |
-| GET    | `/api/users/me/`   | Datos del usuario actual |
-| GET    | `/api/tasks/`      | Listar tareas            |
-| POST   | `/api/tasks/`      | Crear tarea              |
-| PUT    | `/api/tasks/{id}/` | Actualizar tarea         |
-| DELETE | `/api/tasks/{id}/` | Eliminar tarea           |
+> Documentación interactiva disponible en `/api/docs/` (Swagger) y `/api/redoc/` (ReDoc)
+
+| Método | Endpoint                | Descripción                  |
+| ------ | ----------------------- | ---------------------------- |
+| POST   | `/api/users/`           | Registro de usuario          |
+| GET    | `/api/users/me/`        | Datos del usuario actual     |
+| POST   | `/api/token/`           | Obtener tokens JWT (login)   |
+| POST   | `/api/token/refresh/`   | Refrescar access token       |
+| GET    | `/api/tasks/`           | Listar tareas                |
+| POST   | `/api/tasks/`           | Crear tarea                  |
+| PUT    | `/api/tasks/{id}/`      | Actualizar tarea             |
+| DELETE | `/api/tasks/{id}/`      | Eliminar tarea               |
+| POST   | `/api/ai/suggest-task/` | Sugerencia de tarea con IA   |
+| GET    | `/api/schema/`          | Esquema OpenAPI              |
+| GET    | `/api/docs/`            | Swagger UI                   |
+| GET    | `/api/redoc/`           | ReDoc                        |
 
 ## Licencia
 
