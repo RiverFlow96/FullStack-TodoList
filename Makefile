@@ -38,7 +38,7 @@ else
 		_find_tool   = $(shell command -v $(1) 2>/dev/null)
 
 	else ifeq ($(UNAME_S),Darwin)
-		DETECTED_OS := Linux
+		DETECTED_OS := Darwin
 		PYTHON      := python3 -m
 		EXE_EXT     :=
 		FIXPATH      = $1
