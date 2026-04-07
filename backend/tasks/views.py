@@ -46,11 +46,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_object(self):
-        if self.request.user.is_superuser:
-            return super().get_object()
-        return self.request.user
-
     def get_permissions(self):
         if self.action == "create":
             return [AllowAny()]
@@ -60,22 +55,6 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.request.user.is_superuser:
             return User.objects.all()
         return User.objects.filter(id=self.request.user.id)
-
-    def list(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            return super().list(request, *args, **kwargs)
-        return Response(
-            {"detail": "Usa el endpoint /api/users/me/ para consultar tu perfil."},
-            status=status.HTTP_405_METHOD_NOT_ALLOWED,
-        )
-
-    def destroy(self, request, *args, **kwargs):
-        if request.user.is_superuser:
-            return super().destroy(request, *args, **kwargs)
-        return Response(
-            {"detail": "No puedes eliminar tu perfil desde este endpoint."},
-            status=status.HTTP_405_METHOD_NOT_ALLOWED,
-        )
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -136,13 +115,8 @@ class AISuggestTaskAPIView(APIView):
             )
         except ProviderAuthError as exc:
             logger.warning("AI provider auth error: %s", exc)
-            response_payload = {
-                "detail": "Credenciales IA invalidas o sin permisos en el proveedor."
-            }
-            if settings.DEBUG:
-                response_payload["debug"] = str(exc)
             return Response(
-                response_payload,
+                {"detail": "Credenciales IA invalidas o sin permisos en el proveedor."},
                 status=status.HTTP_502_BAD_GATEWAY,
             )
         except AIServiceError as exc:

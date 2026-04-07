@@ -1,14 +1,12 @@
-import { ArrowLeft, UserCircle2, Mail, CheckCircle, Circle, Clock, ListChecks } from "lucide-react"
+import { UserCircle2, Mail, CheckCircle, Circle, Clock, ListChecks } from "lucide-react"
 import { useTaskStore } from "../store/useStore"
 import { useEffect } from "react"
-import { useNavigate } from "react-router-dom"
 import Spinner from "../components/Spinner"
 
 function ProfileLayout() {
     const tasks = useTaskStore((state) => state.tasks)
     const fetchTasks = useTaskStore((state) => state.fetchTasks)
     const loading = useTaskStore((state) => state.loading)
-    const navigate = useNavigate()
 
     useEffect(() => {
         fetchTasks()
@@ -33,15 +31,6 @@ function ProfileLayout() {
                 <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
                     {/* Header with gradient */}
                     <div className="bg-linear-to-r from-violet-600 to-purple-600 h-40 relative">
-                        <button
-                            type="button"
-                            onClick={() => navigate("/home")}
-                            className="absolute left-4 top-4 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white/15 text-white hover:bg-white/25 transition-colors"
-                            aria-label="Go home"
-                            title="Go home"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </button>
                         <div className="absolute -bottom-16 left-1/2 -translate-x-1/2">
                             <div className="bg-white rounded-full p-2 shadow-xl">
                                 <UserCircle2 size={110} strokeWidth={1} className="text-violet-600" />

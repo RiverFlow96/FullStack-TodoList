@@ -43,8 +43,8 @@ export default function RegisterLayout() {
             toast.success(result?.detail || "Registro exitoso.")
 
             navigate("/auth/login", { replace: true })
-        } catch (error) {
-            toast.error(error?.message || "Registration failed. Please try again.")
+        } catch {
+            toast.error("Registration failed. Please try again.")
         } finally {
             setLoading(false)
         }

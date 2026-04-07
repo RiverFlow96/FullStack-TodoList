@@ -56,8 +56,8 @@ def _build_prompt(prompt, existing_tasks):
     return (
         "Eres un asistente para planificar tareas. Devuelve UNICAMENTE un JSON valido "
         "sin markdown ni texto extra con esta forma exacta: "
-        '{"title":"string","description":"string"'
-        '"subtasks":["string"]}. '
+        '{"title":"string","description":"string","priority":"low|medium|high",'
+        '"subtasks":["string"],"tags":["string"]}. '
         "Debes responder en espanol simple y util para el usuario. "
         "Si faltan datos, haz una mejor suposicion razonable. "
         f"Prompt del usuario: {prompt}\n"
@@ -76,19 +76,11 @@ def _http_json_request(url, payload, headers):
             return json.loads(raw)
     except urllib.error.HTTPError as exc:
         response_body = exc.read().decode("utf-8", errors="ignore")
-        lowered_body = response_body.lower()
         if exc.code == 429:
             raise ProviderQuotaError("Provider quota exceeded") from exc
-        if exc.code == 400 and any(
-            text in lowered_body
-            for text in ("api key", "invalid key", "unauthorized", "permission")
-        ):
-            raise ProviderAuthError(
-                f"Provider authentication/authorization failed: {response_body[:400]}"
-            ) from exc
         if exc.code in (401, 403):
             raise ProviderAuthError(
-                f"Provider authentication/authorization failed: {response_body[:400]}"
+                "Provider authentication/authorization failed"
             ) from exc
         if exc.code >= 500:
             raise AIServiceError("Provider server error") from exc
