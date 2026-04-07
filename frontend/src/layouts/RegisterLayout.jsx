@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { User, Lock, Mail } from "lucide-react"
+import { User, Lock, Mail, Eye, EyeOff } from "lucide-react"
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,8 @@ export default function RegisterLayout() {
     const { registerUser, isLoggedIn } = useAuthStore()
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -64,14 +66,30 @@ export default function RegisterLayout() {
                 {/* Password - Input */}
                 <div className="flex flex-row my-4 sm:my-5 min-w-full relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />
-                    <input {...register("password")} className="border-b-2 w-full pl-10 pr-4 py-2.5 text-sm sm:text-base outline-none focus:border-violet-600 transition-colors" type="password" placeholder="password" />
+                    <input {...register("password")} className="border-b-2 w-full pl-10 pr-12 py-2.5 text-sm sm:text-base outline-none focus:border-violet-600 transition-colors" type={showPassword ? "text" : "password"} placeholder="password" />
+                    <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-black/60 hover:text-black"
+                        aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                 </div>
                 {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
 
                 {/* Confirm Password - Input*/}
                 <div className="flex flex-row my-4 sm:my-5 min-w-full relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-2/3 h-5 w-5 text-black/60" />
-                    <input {...register("confirmPassword")} className="border-b-2 w-full pl-10 pr-4 py-2.5 text-sm sm:text-base outline-none focus:border-violet-600 transition-colors" type="password" placeholder="confirm password" />
+                    <input {...register("confirmPassword")} className="border-b-2 w-full pl-10 pr-12 py-2.5 text-sm sm:text-base outline-none focus:border-violet-600 transition-colors" type={showConfirmPassword ? "text" : "password"} placeholder="confirm password" />
+                    <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-black/60 hover:text-black"
+                        aria-label={showConfirmPassword ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
+                    >
+                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
                 </div>
                 {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword?.message}</span>}
 
