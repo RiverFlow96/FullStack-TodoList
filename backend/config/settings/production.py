@@ -108,9 +108,7 @@ if cors_regexes:
 # CSRF
 # =============================================================================
 
-CSRF_TRUSTED_ORIGINS = [
-    normalize_origin(origin) for origin in env_list("CSRF_TRUSTED_ORIGINS")
-]
+CSRF_TRUSTED_ORIGINS = [normalize_origin(origin) for origin in env_list("CSRF_TRUSTED_ORIGINS")]
 
 # =============================================================================
 # SECURITY HEADERS

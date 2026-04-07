@@ -19,9 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if self.instance is None and not attrs.get("password"):
-            raise serializers.ValidationError(
-                {"password": "La contraseña es obligatoria"}
-            )
+            raise serializers.ValidationError({"password": "La contraseña es obligatoria"})
         return attrs
 
     def create(self, validated_data):

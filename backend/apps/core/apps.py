@@ -1,11 +1,10 @@
-'''
+"""
 Core app configuration.
 
 This app contains shared utilities and base functionality for other apps.
 
 TODO: Add custom error handling, and other core features as needed.
-'''
-
+"""
 
 from django.apps import AppConfig
 

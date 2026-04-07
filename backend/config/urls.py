@@ -15,8 +15,8 @@ from drf_spectacular.views import (
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 
-from apps.assistant.views import AISuggestTaskAPIView
 from apps.accounts.views import AppTokenObtainPairView, UserViewSet
+from apps.assistant.views import AISuggestTaskAPIView
 from apps.tasks.views import TaskViewSet
 
 # =============================================================================

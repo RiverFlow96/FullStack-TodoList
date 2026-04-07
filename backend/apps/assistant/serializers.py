@@ -3,9 +3,7 @@ from rest_framework import serializers
 
 class ExistingTaskContextSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=200, required=False, allow_blank=True)
-    description = serializers.CharField(
-        max_length=1000, required=False, allow_blank=True, allow_null=True
-    )
+    description = serializers.CharField(max_length=1000, required=False, allow_blank=True, allow_null=True)
     completed = serializers.BooleanField(required=False)
 
 

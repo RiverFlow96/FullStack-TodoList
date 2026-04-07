@@ -64,9 +64,7 @@ class AISuggestTaskAPIView(APIView):
             )
         except AIServiceError as exc:
             logger.warning("AI service error: %s", exc)
-            response_payload = {
-                "detail": "No se pudo generar una sugerencia en este momento."
-            }
+            response_payload = {"detail": "No se pudo generar una sugerencia en este momento."}
             if settings.DEBUG:
                 response_payload["debug"] = str(exc)
             return Response(

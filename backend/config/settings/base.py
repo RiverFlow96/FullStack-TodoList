@@ -7,12 +7,10 @@ Do not import this module directly. Use development.py or production.py instead.
 import os
 from datetime import timedelta
 from pathlib import Path
+from typing import Any
 from urllib.parse import urlsplit
 
-from typing import Dict, Any
-
 from dotenv import load_dotenv
-
 
 # Load environment variables from .env file
 load_dotenv()
@@ -74,9 +72,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # CORE SETTINGS
 # =============================================================================
 
-SECRET_KEY = env_str(
-    "SECRET_KEY", "django-insecure-change-me-in-production-please-use-a-secure-key"
-)
+SECRET_KEY = env_str("SECRET_KEY", "django-insecure-change-me-in-production-please-use-a-secure-key")
 
 # Application definition
 DJANGO_APPS = [
@@ -271,9 +267,9 @@ SPECTACULAR_SETTINGS = {
     # "SCHEMA_PATH_PREFIX": r"/api/",
     "COMPONENT_SPLIT_REQUEST": True,
     "SWAGGER_UI_SETTINGS": {
-        "persistAuthorization": True, # Keep the JWT token in Swagger UI even after page reload
-        "filter": True, # Enable search/filter box in Swagger UI
-        "deepLinking": True, # Enable deep linking for tags and operations in Swagger UI
+        "persistAuthorization": True,  # Keep the JWT token in Swagger UI even after page reload
+        "filter": True,  # Enable search/filter box in Swagger UI
+        "deepLinking": True,  # Enable deep linking for tags and operations in Swagger UI
     },
     # TODO: Split tags into separate groups (e.g. auth, users, tasks, ai) for better organization in Swagger UI
     # "TAGS": [
@@ -295,15 +291,13 @@ EMAIL_HOST_USER = env_str("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = env_str("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 EMAIL_TIMEOUT = env_int("EMAIL_TIMEOUT", 10)
-DEFAULT_FROM_EMAIL = env_str(
-    "DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@example.com"
-)
+DEFAULT_FROM_EMAIL = env_str("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@example.com")
 
 # =============================================================================
 # LOGGING (BASE CONFIGURATION)
 # =============================================================================
 
-LOGGING: Dict[str, Any] = {
+LOGGING: dict[str, Any] = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
