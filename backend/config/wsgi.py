@@ -1,5 +1,5 @@
 """
-WSGI config for todolistapi project.
+WSGI config for FullStack TodoList project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

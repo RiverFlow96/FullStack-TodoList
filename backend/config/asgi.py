@@ -1,5 +1,5 @@
 """
-ASGI config for todolistapi project.
+ASGI config for FullStack TodoList project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

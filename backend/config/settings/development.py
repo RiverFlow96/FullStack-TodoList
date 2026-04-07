@@ -1,16 +1,23 @@
 """
 Django development settings.
 
-Usage:
-    export DJANGO_ENV=development
+Usage (Windows PowerShell):
+    $env:DJANGO_SETTINGS_MODULE = "config.settings.development"
     python manage.py runserver
+
+Usage (Linux/macOS):
+    export DJANGO_SETTINGS_MODULE=config.settings.development
+    python manage.py runserver
+
+Or via Makefile (default):
+    make runserver
 """
 
-from .base import *  # noqa: F401, F403
-from .base import LOGGING as BASE_LOGGING
-from .base import BASE_DIR, REST_FRAMEWORK
-
 from copy import deepcopy
+
+from .base import *  # noqa: F403
+from .base import BASE_DIR, REST_FRAMEWORK
+from .base import LOGGING as BASE_LOGGING
 
 # =============================================================================
 # DEBUG MODE
@@ -103,13 +110,13 @@ except ImportError:
 LOGGING = deepcopy(BASE_LOGGING)
 
 if LOGGING.get("handlers") and LOGGING["handlers"].get("console"):
-    LOGGING["handlers"]["console"]["level"] = "DEBUG"  # noqa: F405
+    LOGGING["handlers"]["console"]["level"] = "DEBUG"
 
 if LOGGING.get("loggers") and LOGGING["loggers"].get("apps"):
-    LOGGING["loggers"]["apps"]["level"] = "DEBUG"  # noqa: F405
+    LOGGING["loggers"]["apps"]["level"] = "DEBUG"
 
 if LOGGING.get("loggers"):
-    LOGGING["loggers"]["django.db.backends"] = {  # noqa: F405
+    LOGGING["loggers"]["django.db.backends"] = {
         "handlers": ["console"],
         "level": "WARNING",  # Set to DEBUG to see SQL queries
         "propagate": False,

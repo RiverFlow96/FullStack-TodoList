@@ -1,17 +1,24 @@
 """
 Django production settings.
 
-Usage:
-    export DJANGO_ENV=production
+Usage (Windows PowerShell):
+    $env:DJANGO_SETTINGS_MODULE = "config.settings.production"
     gunicorn config.wsgi:application
+
+Usage (Linux/macOS):
+    export DJANGO_SETTINGS_MODULE=config.settings.production
+    gunicorn config.wsgi:application
+
+Or via Makefile:
+    make runserver DJANGO_ENV=production
 """
 
 import os
 
 import dj_database_url
 
-from .base import *  # noqa: F401, F403
-from .base import env_bool, env_list, env_str, normalize_origin
+from .base import *  # noqa: F403
+from .base import BASE_DIR, env_bool, env_list, env_str, normalize_origin
 
 # =============================================================================
 # DEBUG MODE
