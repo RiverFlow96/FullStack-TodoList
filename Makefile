@@ -33,10 +33,20 @@ else
 		FIXPATH      = $1
 		RM_FILE      = rm -f $1
 		RM_DIR       = rm -rf $1
+		_rm_file     = rm -f $(1)
+		_rm_dir      = rm -rf $(1)
 		_find_tool   = $(shell command -v $(1) 2>/dev/null)
 
 	else ifeq ($(UNAME_S),Darwin)
-		$(error macOS is not tested by this project)
+		DETECTED_OS := Linux
+		PYTHON      := python3 -m
+		EXE_EXT     :=
+		FIXPATH      = $1
+		RM_FILE      = rm -f $1
+		RM_DIR       = rm -rf $1
+		_rm_file     = rm -f $(1)
+		_rm_dir      = rm -rf $(1)
+		_find_tool   = $(shell command -v $(1) 2>/dev/null)
 
 	else
 		$(error Unsupported operating system: $(UNAME_S))

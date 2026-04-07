@@ -1,5 +1,6 @@
 import json
 import os
+import socket
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -86,7 +87,9 @@ def _http_json_request(url, payload, headers):
             raise AIServiceError("Provider server error") from exc
         raise AIServiceError(f"Provider request failed: {response_body[:500]}") from exc
     except urllib.error.URLError as exc:
-        raise ProviderTimeoutError("Provider request timed out") from exc
+        if isinstance(exc.reason, (socket.timeout, TimeoutError)):
+            raise ProviderTimeoutError("Provider request timed out") from exc
+        raise AIServiceError(f"Provider network error: {exc.reason}") from exc
     except TimeoutError as exc:
         raise ProviderTimeoutError("Provider request timed out") from exc
 
