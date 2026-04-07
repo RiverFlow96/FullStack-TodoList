@@ -47,16 +47,20 @@ else
 	endif
 endif
 
+# Default Django settings module (override with: make <target> DJANGO_ENV=production)
+DJANGO_ENV ?= development
+DJANGO_SETTINGS_MODULE ?= config.settings.$(DJANGO_ENV)
+
 ifeq ($(DETECTED_OS),Windows)
     BACKEND_SCRIPT = backend/scripts/build_backend.ps1
 	ENV_SCRIPT   = scripts/setup_env.ps1
 	# Activate backend venv and run command in one line (PowerShell)
-	run_in_venv = pwsh -NoProfile -Command "Set-Location backend; & .\.venv\Scripts\Activate.ps1; $(1)"
+	run_in_venv = pwsh -NoProfile -Command "Set-Location backend; & .\.venv\Scripts\Activate.ps1; [Environment]::SetEnvironmentVariable('DJANGO_SETTINGS_MODULE', '$(DJANGO_SETTINGS_MODULE)', 'Process'); $(1)"
 else
     BACKEND_SCRIPT = backend/scripts/build_backend.sh
 	ENV_SCRIPT   = scripts/setup_env.sh
 	# Activate backend venv and run command in one line (POSIX sh compatible)
-	run_in_venv = cd backend && . .venv/bin/activate && $(1)
+	run_in_venv = cd backend && . .venv/bin/activate && DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) $(1)
 endif
 
 # =========================================================================
@@ -193,7 +197,7 @@ migrate:
 
 shell:
 	$(call _section,Django Shell)
-	@$(call run_in_venv,python manage.py shell)
+	$(call run_in_venv,python manage.py shell)
 
 test:
 	$(call _section,Running Tests)
