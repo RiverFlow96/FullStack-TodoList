@@ -251,7 +251,7 @@ class OpenRouterProvider(BaseLLMProvider):
     def __init__(self):
         self.api_key = _env_str("OPENROUTER_API_KEY")
         self.model = _env_str(
-            "OPENROUTER_MODEL", "meta-llama/Llama-3.1-8b-instruct:free"
+            "OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free"
         )
         self.site_url = _env_str("OPENROUTER_SITE_URL", "http://localhost:8000")
         self.app_name = _env_str("OPENROUTER_APP_NAME", "Fullstack TodoList")
@@ -270,7 +270,6 @@ class OpenRouterProvider(BaseLLMProvider):
                 {"role": "user", "content": _build_prompt(prompt, existing_tasks)},
             ],
             "temperature": 0.3,
-            "response_format": {"type": "json_object"},
         }
         headers = {
             "Authorization": f"Bearer {self.api_key}",
@@ -280,6 +279,11 @@ class OpenRouterProvider(BaseLLMProvider):
         }
         response = _http_json_request(url, payload, headers)
         content = response["choices"][0]["message"]["content"]
+        if isinstance(content, list):
+            content = "".join(
+                str(item.get("text", "")) if isinstance(item, dict) else str(item)
+                for item in content
+            )
         parsed = _parse_json_content(content)
         return _normalize_response(parsed)
 
@@ -294,7 +298,9 @@ def _get_provider(provider_name):
         return AzureOpenAIProvider()
     if normalized == "openrouter":
         return OpenRouterProvider()
-    raise ProviderNotConfiguredError("LLM_PROVIDER must be openai, gemini, or azure")
+    raise ProviderNotConfiguredError(
+        "LLM_PROVIDER must be openai, gemini, azure, or openrouter"
+    )
 
 
 def suggest_task(prompt, existing_tasks=None):
