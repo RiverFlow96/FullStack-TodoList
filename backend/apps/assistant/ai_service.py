@@ -241,7 +241,7 @@ class AzureOpenAIProvider(BaseLLMProvider):
 class OpenRouterProvider(BaseLLMProvider):
     def __init__(self):
         self.api_key = _env_str("OPENROUTER_API_KEY")
-        self.model = _env_str("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+        self.model = _env_str("OPENROUTER_MODEL", "qwen/qwen3.6-plus")
         self.site_url = _env_str("OPENROUTER_SITE_URL", "http://localhost:8000")
         self.app_name = _env_str("OPENROUTER_APP_NAME", "Fullstack TodoList")
         if not self.api_key:

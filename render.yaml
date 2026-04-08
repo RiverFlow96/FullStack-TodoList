@@ -27,7 +27,7 @@ services:
       - key: OPENROUTER_API_KEY
         sync: false
       - key: OPENROUTER_MODEL
-        value: meta-llama/llama-3.1-8b-instruct:free
+        value: qwen/qwen3.6-plus
       - key: OPENROUTER_SITE_URL
         value: http://localhost:8000
       - key: OPENROUTER_APP_NAME
