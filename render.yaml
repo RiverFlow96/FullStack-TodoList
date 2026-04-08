@@ -34,3 +34,5 @@ services:
         value: FullStack TodoList
       - key: LLM_TIMEOUT_SECONDS
         value: "20"
+      - key: LLM_MAX_TOKENS
+        value: "300"

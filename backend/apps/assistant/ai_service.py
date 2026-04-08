@@ -42,6 +42,13 @@ def _timeout_seconds():
         return 20
 
 
+def _max_tokens(default=300):
+    try:
+        return int(os.getenv("LLM_MAX_TOKENS", str(default)))
+    except (TypeError, ValueError):
+        return default
+
+
 def _build_prompt(prompt, existing_tasks):
     context = {
         "existingTasks": [
@@ -77,6 +84,8 @@ def _http_json_request(url, payload, headers):
             return json.loads(raw)
     except urllib.error.HTTPError as exc:
         response_body = exc.read().decode("utf-8", errors="ignore")
+        if exc.code == 402:
+            raise ProviderQuotaError("Provider credits are insufficient") from exc
         if exc.code == 429:
             raise ProviderQuotaError("Provider quota exceeded") from exc
         if exc.code in (401, 403):
@@ -244,6 +253,7 @@ class OpenRouterProvider(BaseLLMProvider):
         self.model = _env_str("OPENROUTER_MODEL", "qwen/qwen3.6-plus")
         self.site_url = _env_str("OPENROUTER_SITE_URL", "http://localhost:8000")
         self.app_name = _env_str("OPENROUTER_APP_NAME", "Fullstack TodoList")
+        self.max_tokens = _max_tokens(300)
         if not self.api_key:
             raise ProviderNotConfiguredError("OPENROUTER_API_KEY is not configured")
 
@@ -259,6 +269,7 @@ class OpenRouterProvider(BaseLLMProvider):
                 {"role": "user", "content": _build_prompt(prompt, existing_tasks)},
             ],
             "temperature": 0.3,
+            "max_tokens": self.max_tokens,
         }
         headers = {
             "Authorization": f"Bearer {self.api_key}",
