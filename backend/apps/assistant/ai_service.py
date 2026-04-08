@@ -80,14 +80,12 @@ def _http_json_request(url, payload, headers):
         if exc.code == 429:
             raise ProviderQuotaError("Provider quota exceeded") from exc
         if exc.code in (401, 403):
-            raise ProviderAuthError(
-                "Provider authentication/authorization failed"
-            ) from exc
+            raise ProviderAuthError("Provider authentication/authorization failed") from exc
         if exc.code >= 500:
             raise AIServiceError("Provider server error") from exc
         raise AIServiceError(f"Provider request failed: {response_body[:500]}") from exc
     except urllib.error.URLError as exc:
-        if isinstance(exc.reason, (socket.timeout, TimeoutError)):
+        if isinstance(exc.reason, socket.timeout | TimeoutError):
             raise ProviderTimeoutError("Provider request timed out") from exc
         raise AIServiceError(f"Provider network error: {exc.reason}") from exc
     except TimeoutError as exc:
@@ -189,9 +187,7 @@ class GeminiProvider(BaseLLMProvider):
             "contents": [
                 {
                     "parts": [
-                        {
-                            "text": "Responde siempre en JSON valido con la estructura solicitada."
-                        },
+                        {"text": "Responde siempre en JSON valido con la estructura solicitada."},
                         {"text": _build_prompt(prompt, existing_tasks)},
                     ]
                 }
@@ -216,16 +212,11 @@ class AzureOpenAIProvider(BaseLLMProvider):
         self.api_version = _env_str("AZURE_OPENAI_API_VERSION")
 
         if not all([self.api_key, self.endpoint, self.deployment, self.api_version]):
-            raise ProviderNotConfiguredError(
-                "Azure OpenAI env vars are not fully configured"
-            )
+            raise ProviderNotConfiguredError("Azure OpenAI env vars are not fully configured")
 
     def suggest_task(self, prompt, existing_tasks):
         base_endpoint = self.endpoint.rstrip("/")
-        url = (
-            f"{base_endpoint}/openai/deployments/{self.deployment}/chat/completions"
-            f"?api-version={self.api_version}"
-        )
+        url = f"{base_endpoint}/openai/deployments/{self.deployment}/chat/completions?api-version={self.api_version}"
         payload = {
             "messages": [
                 {
@@ -250,9 +241,7 @@ class AzureOpenAIProvider(BaseLLMProvider):
 class OpenRouterProvider(BaseLLMProvider):
     def __init__(self):
         self.api_key = _env_str("OPENROUTER_API_KEY")
-        self.model = _env_str(
-            "OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free"
-        )
+        self.model = _env_str("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
         self.site_url = _env_str("OPENROUTER_SITE_URL", "http://localhost:8000")
         self.app_name = _env_str("OPENROUTER_APP_NAME", "Fullstack TodoList")
         if not self.api_key:
@@ -280,10 +269,7 @@ class OpenRouterProvider(BaseLLMProvider):
         response = _http_json_request(url, payload, headers)
         content = response["choices"][0]["message"]["content"]
         if isinstance(content, list):
-            content = "".join(
-                str(item.get("text", "")) if isinstance(item, dict) else str(item)
-                for item in content
-            )
+            content = "".join(str(item.get("text", "")) if isinstance(item, dict) else str(item) for item in content)
         parsed = _parse_json_content(content)
         return _normalize_response(parsed)
 
@@ -298,9 +284,7 @@ def _get_provider(provider_name):
         return AzureOpenAIProvider()
     if normalized == "openrouter":
         return OpenRouterProvider()
-    raise ProviderNotConfiguredError(
-        "LLM_PROVIDER must be openai, gemini, azure, or openrouter"
-    )
+    raise ProviderNotConfiguredError("LLM_PROVIDER must be openai, gemini, azure, or openrouter")
 
 
 def suggest_task(prompt, existing_tasks=None):

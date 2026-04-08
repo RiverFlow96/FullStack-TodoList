@@ -1,13 +1,10 @@
 import logging
 
 from django.conf import settings
-from django.contrib.auth.models import User
-from rest_framework import permissions, status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .ai_service import (
     AIServiceError,
@@ -17,66 +14,12 @@ from .ai_service import (
     ProviderTimeoutError,
     suggest_task,
 )
-from .models import Task
 from .serializers import (
     AISuggestTaskRequestSerializer,
     AISuggestTaskResponseSerializer,
-    TaskSerializer,
-    UserSerializer,
 )
 
 logger = logging.getLogger(__name__)
-
-
-class TaskViewSet(viewsets.ModelViewSet):
-    serializer_class = TaskSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        if user.is_superuser:
-            return Task.objects.all()
-        return Task.objects.filter(user=user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_permissions(self):
-        if self.action == "create":
-            return [AllowAny()]
-        return [IsAuthenticated()]
-
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            return User.objects.all()
-        return User.objects.filter(id=self.request.user.id)
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response(
-            {
-                "detail": "Cuenta creada correctamente.",
-                "user": serializer.data,
-            },
-            status=status.HTTP_201_CREATED,
-        )
-
-    @action(detail=False, methods=["get"], url_path="me", url_name="me")
-    def me(self, request):
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
-
-
-class AppTokenObtainPairView(TokenObtainPairView):
-    pass
 
 
 class AISuggestTaskAPIView(APIView):
@@ -121,9 +64,7 @@ class AISuggestTaskAPIView(APIView):
             )
         except AIServiceError as exc:
             logger.warning("AI service error: %s", exc)
-            response_payload = {
-                "detail": "No se pudo generar una sugerencia en este momento."
-            }
+            response_payload = {"detail": "No se pudo generar una sugerencia en este momento."}
             if settings.DEBUG:
                 response_payload["debug"] = str(exc)
             return Response(
