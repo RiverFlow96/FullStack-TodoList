@@ -3,9 +3,11 @@ services:
     name: fullstack-todolist-backend
     env: python
     rootDir: backend
-    buildCommand: ./build.sh
-    startCommand: gunicorn todolistapi.wsgi:application --bind 0.0.0.0:$PORT
+    buildCommand: ./scripts/build_backend.sh
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.production
       - key: DEBUG
         value: "False"
       - key: PYTHON_VERSION
@@ -20,3 +22,17 @@ services:
         sync: false
       - key: CSRF_TRUSTED_ORIGINS
         sync: false
+      - key: LLM_PROVIDER
+        value: openrouter
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: minimax/minimax-m2.5:free
+      - key: OPENROUTER_SITE_URL
+        value: http://localhost:8000
+      - key: OPENROUTER_APP_NAME
+        value: FullStack TodoList
+      - key: LLM_TIMEOUT_SECONDS
+        value: "20"
+      - key: LLM_MAX_TOKENS
+        value: "300"

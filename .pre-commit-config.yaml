@@ -16,7 +16,9 @@ repos:
     hooks:
       - id: trailing-whitespace # Remove trailing whitespace
         args: ['--markdown-linebreak-ext=md']
+        exclude: \.(png|jpg|jpeg|gif|svg|ico|webp|ttf|woff|woff2)$
       - id: end-of-file-fixer # Ensure files end with newline
+        exclude: \.(png|jpg|jpeg|gif|svg|ico|webp|ttf|woff|woff2)$
       - id: check-yaml # Validate YAML syntax
       - id: check-json # Validate JSON syntax
       - id: check-xml # Validate XML syntax
@@ -24,7 +26,7 @@ repos:
         args: ['--maxkb=500']
       - id: check-merge-conflict # Detect merge conflict markers
       - id: mixed-line-ending # Detect mixed line endings
-        args: ['--fix=lf'] # Normalize to LF line endings
+        exclude: \.(png|jpg|jpeg|gif|svg|ico|webp|ttf|woff|woff2)$
       - id: check-case-conflict # Detect files that would conflict on case-insensitive filesystems
       #- id: detect-private-key # Prevent committing private keys (....i not sure if this is useful in this state of the project, but it can be enabled later if needed)
 
@@ -66,11 +68,14 @@ repos:
         pass_filenames: false
 
   # Django migrations check
-  - repo: local
-    hooks:
-      - id: migrations-check
-        name: Check for uncreated migrations
-        entry: python backend/manage.py makemigrations --check --dry-run
-        language: system
-        files: ^backend/.*models\.py$
-        pass_filenames: false
+  # Disabled: Requires Django to be installed in the pre-commit environment
+  # DMsuDev Note: I don't want to add Django as a dependency for pre-commit just to check for uncreated migrations, so this hook is disabled. Instead, use `make migrate` locally to check for uncreated migrations before committing.
+  # Use `make migrate` locally to check for uncreated migrations
+  # - repo: local
+  #   hooks:
+  #     - id: migrations-check
+  #       name: Check for uncreated migrations
+  #       entry: python backend/manage.py makemigrations --check --dry-run
+  #       language: system
+  #       files: ^backend/.*models\.py$
+  #       pass_filenames: false

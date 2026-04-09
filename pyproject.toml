@@ -1,12 +1,109 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "fullstack-todolist"
 version = "1.0.0"
-description = "API para gestionar tareas y usuarios"
-requires-python = ">=3.10"
+description = "API REST para gestionar tareas y usuarios con autenticación JWT"
+readme = "README.md"
+requires-python = ">=3.12,<=3.14"
+license = { file = "LICENSE" }
+authors = [
+    {name = "DMsuDev"},
+    {name = "RiverFlow96"}
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Web Environment",
+    "Framework :: Django :: 6.0",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: Spanish",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    # Django core
+    "django>=6.0.3",
+    "djangorestframework>=3.17.1",
+    "djangorestframework-simplejwt>=5.5.1",
+    "django-cors-headers>=4.9.0",
+    "django-filter>=25.2",
+    "drf-spectacular>=0.29.0",
+    # Database
+    "dj-database-url>=3.1.2",
+    # Utils
+    "python-dotenv>=1.2.2",
+    "whitenoise>=6.12.0",
+    "pyyaml>=6.0.3",
+    "requests>=2.33.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit>=4.5.0",
+    "pytest>=9.0.0",
+    "pytest-django>=4.11.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.3.0",
+    "mypy>=1.8.0",
+]
+prod = [
+    "gunicorn>=23.0.0",
+    "psycopg2-binary>=2.9.10",
+    # Social authentication
+    "django-allauth>=65.15.1",
+    "social-auth-app-django>=5.7.0",
+]
+
+[project.urls]
+Homepage = "https://fullstack-todolist.pages.dev/auth/login"
+Repository = "https://github.com/RiverFlow96/FullStack-TodoList"
+Documentation = "https://github.com/RiverFlow96/FullStack-TodoList/wiki"
+Issues = "https://github.com/RiverFlow96/FullStack-TodoList/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend/tasks", "backend/todolistapi"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "todolistapi.settings"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+testpaths = ["backend"]
+addopts = "--cov=backend --cov-report=html --cov-report=term-missing --strict-markers"
+markers = [
+    "slow: marca tests que son lentos",
+    "integration: marca tests de integración",
+]
+
+[tool.coverage.run]
+source = ["backend"]
+omit = [
+    "*/migrations/*",
+    "*/tests/*",
+    "*/__init__.py",
+    "*/settings.py",
+]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+]
 
 [tool.ruff]
 target-version = "py310"
-line-length = 88
+line-length = 120
 src = ["backend"]
 exclude = [
     ".git",
@@ -16,6 +113,8 @@ exclude = [
     "staticfiles",
     "node_modules",
     "frontend",
+    "build",
+    "dist",
 ]
 
 [tool.ruff.lint]
@@ -27,18 +126,32 @@ select = [
     "B",     # flake8-bugbear
     "C4",    # flake8-comprehensions
     "UP",    # pyupgrade
+    "RUF",   # Ruff-specific rules
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
+    "B008",  # do not perform function calls in argument defaults
+    "RUF012",  # Django Meta class attributes (false positive)
 ]
 
 [tool.ruff.lint.isort]
 known-first-party = ["tasks", "todolistapi"]
+known-third-party = ["django", "rest_framework"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
 
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.10"
+check_untyped_defs = true
 ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = false
 exclude = [
     "migrations/",
     "frontend/",
+    "build/",
+    "dist/",
 ]
