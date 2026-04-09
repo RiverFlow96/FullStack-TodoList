@@ -240,6 +240,187 @@ El archivo `frontend/public/_redirects` está configurado para redirigir todas l
 
 </details>
 
+## Testing
+
+### Backend Testing
+
+El backend usa **pytest** y **pytest-django** para pruebas unitarias e integración.
+
+#### Ejecutar pruebas
+
+```bash
+# Ejecutar todas las pruebas del backend
+source .venv/bin/activate
+pytest backend/apps/tasks/tests/ -v
+
+# Ejecutar pruebas con cobertura
+pytest backend/apps/tasks/tests/ --cov=backend/apps/tasks --cov-report=html
+
+# Ejecutar pruebas de un archivo específico
+pytest backend/apps/tasks/tests/test_models.py -v
+
+# Ejecutar tests que coincidan con un patrón
+pytest backend/apps/tasks/tests/ -k "test_creation" -v
+```
+
+#### Estructura de pruebas del backend
+
+```tree
+backend/apps/tasks/
+├── tests/
+│   ├── __init__.py
+│   ├── test_models.py       # Pruebas del modelo Task (11 tests)
+│   ├── test_serializers.py  # Pruebas de serializers (11 tests)
+│   └── test_views.py        # Pruebas de endpoints API (15 tests)
+├── models.py
+├── serializers.py
+└── views.py
+```
+
+#### Cobertura de pruebas - Backend
+
+| Componente | Cobertura | Tests | Estado |
+|-----------|-----------|-------|--------|
+| Tasks Models | 100% | 11 | ✅ Completo |
+| Tasks Serializers | 100% | 11 | ✅ Completo |
+| Tasks Views | 100% | 15 | ✅ Completo |
+| **Total Tasks App** | **100%** | **37** | **✅ Completo** |
+
+Informe de cobertura completo: `/htmlcov/index.html`
+
+#### Ejemplo de prueba (Backend)
+
+```python
+from django.test import TestCase
+from django.contrib.auth.models import User
+from apps.tasks.models import Task
+
+class TaskModelTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass123"
+        )
+
+    def test_task_creation(self):
+        """Verifica que se puede crear una tarea correctamente"""
+        task = Task.objects.create(
+            title="Test Task",
+            description="Test Description",
+            user=self.user
+        )
+        self.assertEqual(task.title, "Test Task")
+        self.assertFalse(task.completed)
+```
+
+### Frontend Testing
+
+El frontend usa **Vitest** para pruebas unitarias de componentes React.
+
+#### Ejecutar pruebas
+
+```bash
+cd frontend
+
+# Ejecutar todas las pruebas
+npm run test:run
+
+# Ejecutar pruebas en modo watch (re-ejecuta al cambiar archivos)
+npm run test
+
+# Ejecutar con cobertura
+npm run test:run
+
+# Ejecutar tests que coincidan con un patrón
+npm run test:run -- -t "TaskCard"
+```
+
+#### Estructura de pruebas del frontend
+
+```tree
+frontend/src/
+├── components/
+│   └── __tests__/
+│       ├── TaskCard.test.jsx      # Pruebas del componente TaskCard (9 tests)
+│       └── Spinner.test.jsx       # Pruebas del componente Spinner (6 tests)
+└── utils/
+    └── __tests__/
+        └── schema.test.js         # Pruebas de validación Zod (15 tests)
+```
+
+#### Cobertura de pruebas - Frontend
+
+| Componente | Cobertura | Tests | Estado |
+|-----------|-----------|-------|--------|
+| TaskCard | 100% | 9 | ✅ Completo |
+| Spinner | 100% | 6 | ✅ Completo |
+| Validation Schemas | 95% | 15 | ✅ Completo |
+| **Total Frontend** | **97.61%** | **30** | **✅ Completo** |
+
+Informe de cobertura: `/frontend/coverage/index.html`
+
+#### Ejemplo de prueba (Frontend)
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { TaskCard } from '../TaskCard'
+
+describe('TaskCard Component', () => {
+  it('renders task title correctly', () => {
+    const task = {
+      id: 1,
+      title: 'Test Task',
+      completed: false
+    }
+
+    render(<TaskCard task={task} />)
+    expect(screen.getByText('Test Task')).toBeInTheDocument()
+  })
+
+  it('shows completed state', () => {
+    const task = {
+      id: 1,
+      title: 'Completed Task',
+      completed: true
+    }
+
+    render(<TaskCard task={task} />)
+    const checkbox = screen.getByRole('checkbox')
+    expect(checkbox).toBeChecked()
+  })
+})
+```
+
+#### Configuración de Vitest
+
+El archivo `frontend/vitest.config.ts` incluye:
+
+```typescript
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: ['./src/test/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+    },
+  },
+})
+```
+
+### Resumen de Pruebas
+
+| Stack | Framework | Pruebas | Cobertura | Status |
+|-------|-----------|---------|-----------|--------|
+| Backend | pytest | 37 | 100% | ✅ |
+| Frontend | Vitest | 30 | 97.61% | ✅ |
+| **Total** | - | **67** | **97%** | **✅** |
+
+Todos los tests pasan correctamente en cada ejecución.
+
 ## API Endpoints
 
 > Documentación interactiva disponible en `/api/docs/` (Swagger) y `/api/redoc/` (ReDoc)

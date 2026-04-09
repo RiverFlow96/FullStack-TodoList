@@ -240,6 +240,187 @@ The `frontend/public/_redirects` file is configured to redirect all routes to `i
 
 </details>
 
+## Testing
+
+### Backend Testing
+
+The backend uses **pytest** and **pytest-django** for unit and integration testing.
+
+#### Running Tests
+
+```bash
+# Run all backend tests
+source .venv/bin/activate
+pytest backend/apps/tasks/tests/ -v
+
+# Run tests with coverage report
+pytest backend/apps/tasks/tests/ --cov=backend/apps/tasks --cov-report=html
+
+# Run tests from a specific file
+pytest backend/apps/tasks/tests/test_models.py -v
+
+# Run tests matching a pattern
+pytest backend/apps/tasks/tests/ -k "test_creation" -v
+```
+
+#### Backend Test Structure
+
+```tree
+backend/apps/tasks/
+├── tests/
+│   ├── __init__.py
+│   ├── test_models.py       # Task model tests (11 tests)
+│   ├── test_serializers.py  # Serializer tests (11 tests)
+│   └── test_views.py        # API endpoint tests (15 tests)
+├── models.py
+├── serializers.py
+└── views.py
+```
+
+#### Backend Test Coverage
+
+| Component | Coverage | Tests | Status |
+|-----------|----------|-------|--------|
+| Tasks Models | 100% | 11 | ✅ Complete |
+| Tasks Serializers | 100% | 11 | ✅ Complete |
+| Tasks Views | 100% | 15 | ✅ Complete |
+| **Total Tasks App** | **100%** | **37** | **✅ Complete** |
+
+Full coverage report: `/htmlcov/index.html`
+
+#### Backend Test Example
+
+```python
+from django.test import TestCase
+from django.contrib.auth.models import User
+from apps.tasks.models import Task
+
+class TaskModelTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass123"
+        )
+
+    def test_task_creation(self):
+        """Verify that a task can be created correctly"""
+        task = Task.objects.create(
+            title="Test Task",
+            description="Test Description",
+            user=self.user
+        )
+        self.assertEqual(task.title, "Test Task")
+        self.assertFalse(task.completed)
+```
+
+### Frontend Testing
+
+The frontend uses **Vitest** for React component unit testing.
+
+#### Running Tests
+
+```bash
+cd frontend
+
+# Run all tests
+npm run test:run
+
+# Run tests in watch mode (re-runs on file changes)
+npm run test
+
+# Run tests with coverage
+npm run test:run
+
+# Run tests matching a pattern
+npm run test:run -- -t "TaskCard"
+```
+
+#### Frontend Test Structure
+
+```tree
+frontend/src/
+├── components/
+│   └── __tests__/
+│       ├── TaskCard.test.jsx      # TaskCard component tests (9 tests)
+│       └── Spinner.test.jsx       # Spinner component tests (6 tests)
+└── utils/
+    └── __tests__/
+        └── schema.test.js         # Zod validation tests (15 tests)
+```
+
+#### Frontend Test Coverage
+
+| Component | Coverage | Tests | Status |
+|-----------|----------|-------|--------|
+| TaskCard | 100% | 9 | ✅ Complete |
+| Spinner | 100% | 6 | ✅ Complete |
+| Validation Schemas | 95% | 15 | ✅ Complete |
+| **Total Frontend** | **97.61%** | **30** | **✅ Complete** |
+
+Coverage report: `/frontend/coverage/index.html`
+
+#### Frontend Test Example
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { TaskCard } from '../TaskCard'
+
+describe('TaskCard Component', () => {
+  it('renders task title correctly', () => {
+    const task = {
+      id: 1,
+      title: 'Test Task',
+      completed: false
+    }
+
+    render(<TaskCard task={task} />)
+    expect(screen.getByText('Test Task')).toBeInTheDocument()
+  })
+
+  it('shows completed state', () => {
+    const task = {
+      id: 1,
+      title: 'Completed Task',
+      completed: true
+    }
+
+    render(<TaskCard task={task} />)
+    const checkbox = screen.getByRole('checkbox')
+    expect(checkbox).toBeChecked()
+  })
+})
+```
+
+#### Vitest Configuration
+
+The `frontend/vitest.config.ts` file includes:
+
+```typescript
+export default defineConfig({
+  test: {
+    globals: true,
+    environment: 'happy-dom',
+    setupFiles: ['./src/test/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+    },
+  },
+})
+```
+
+### Testing Summary
+
+| Stack | Framework | Tests | Coverage | Status |
+|-------|-----------|-------|----------|--------|
+| Backend | pytest | 37 | 100% | ✅ |
+| Frontend | Vitest | 30 | 97.61% | ✅ |
+| **Total** | - | **67** | **97%** | **✅** |
+
+All tests pass correctly on each run.
+
 ## API Endpoints
 
 > Interactive documentation available at `/api/docs/` (Swagger) and `/api/redoc/` (ReDoc)
