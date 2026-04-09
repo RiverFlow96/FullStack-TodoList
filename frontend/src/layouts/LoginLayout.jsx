@@ -63,11 +63,6 @@ export default function LoginLayout() {
                     </button>
                 </div>
                 {errors.password && <span className="text-red-500 text-sm">{errors.password?.message}</span>}
-                <div className="w-full text-right -mt-2 mb-2">
-                    <Link to={'/auth/forgot-password'} className="text-violet-700 text-sm underline underline-offset-2 hover:text-violet-600">
-                        ¿Olvidaste tu contraseña?
-                    </Link>
-                </div>
                 <button
                     type="submit"
                     disabled={loading}
