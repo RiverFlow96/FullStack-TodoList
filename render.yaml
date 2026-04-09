@@ -27,7 +27,7 @@ services:
       - key: OPENROUTER_API_KEY
         sync: false
       - key: OPENROUTER_MODEL
-        value: qwen/qwen3.6-plus
+        value: minimax/minimax-m2.5:free
       - key: OPENROUTER_SITE_URL
         value: http://localhost:8000
       - key: OPENROUTER_APP_NAME

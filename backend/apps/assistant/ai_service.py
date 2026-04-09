@@ -42,13 +42,6 @@ def _timeout_seconds():
         return 20
 
 
-def _max_tokens(default=300):
-    try:
-        return int(os.getenv("LLM_MAX_TOKENS", str(default)))
-    except (TypeError, ValueError):
-        return default
-
-
 def _build_prompt(prompt, existing_tasks):
     context = {
         "existingTasks": [
@@ -250,10 +243,9 @@ class AzureOpenAIProvider(BaseLLMProvider):
 class OpenRouterProvider(BaseLLMProvider):
     def __init__(self):
         self.api_key = _env_str("OPENROUTER_API_KEY")
-        self.model = _env_str("OPENROUTER_MODEL", "qwen/qwen3.6-plus")
+        self.model = _env_str("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
         self.site_url = _env_str("OPENROUTER_SITE_URL", "http://localhost:8000")
         self.app_name = _env_str("OPENROUTER_APP_NAME", "Fullstack TodoList")
-        self.max_tokens = _max_tokens(300)
         if not self.api_key:
             raise ProviderNotConfiguredError("OPENROUTER_API_KEY is not configured")
 
@@ -269,7 +261,6 @@ class OpenRouterProvider(BaseLLMProvider):
                 {"role": "user", "content": _build_prompt(prompt, existing_tasks)},
             ],
             "temperature": 0.3,
-            "max_tokens": self.max_tokens,
         }
         headers = {
             "Authorization": f"Bearer {self.api_key}",
