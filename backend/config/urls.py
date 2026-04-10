@@ -17,7 +17,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.accounts.views import AppTokenObtainPairView, UserViewSet
 from apps.assistant.views import AISuggestTaskAPIView
-from apps.tasks.views import TaskViewSet
+from apps.tasks.views import TaskGroupViewSet, TaskViewSet
 
 # =============================================================================
 # ROUTER
@@ -25,6 +25,7 @@ from apps.tasks.views import TaskViewSet
 
 router = DefaultRouter()
 router.register(r"tasks", TaskViewSet, basename="task")
+router.register(r"groups", TaskGroupViewSet, basename="group")
 router.register(r"users", UserViewSet, basename="user")
 
 # =============================================================================

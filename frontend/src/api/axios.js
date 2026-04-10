@@ -59,6 +59,15 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        // Verificar si hay token de acceso
+        const accessToken = localStorage.getItem('access_token')
+        if (!accessToken) {
+            // No hay token, hacer logout y redirigir
+            logout()
+            window.location.href = '/auth/login'
+            return Promise.reject(error)
+        }
+
         // Si el error es 401 y no es una petición de refresco
         if (error.response?.status === 401 && !originalRequest._retry) {
             // Si ya estamos refrescando, añade a la cola
@@ -80,6 +89,7 @@ api.interceptors.response.use(
                 if (!refreshToken) {
                     // Sin refresh token, hacer logout
                     logout()
+                    window.location.href = '/auth/login'
                     processQueue(new Error('No refresh token'), null)
                     return Promise.reject(error)
                 }
@@ -106,6 +116,7 @@ api.interceptors.response.use(
             } catch (refreshError) {
                 // Error refrescando token
                 logout()
+                window.location.href = '/auth/login'
                 processQueue(refreshError, null)
                 return Promise.reject(refreshError)
             }
@@ -118,9 +129,10 @@ api.interceptors.response.use(
 export const fetchTasks = async () => {
     try {
         const response = await api.get('tasks/')
-        return response.data
+        return response.data || []
     } catch (error) {
         console.error('Error fetching tasks: ', error)
+        return []
     }
 }
 
@@ -133,12 +145,13 @@ export const fetchTask = async (id) => {
     }
 }
 
-export const createTask = async (taskData) => {
+export const createTask = async (taskData, groupId = null) => {
     try {
         const response = await api.post('tasks/', {
             title: taskData.title,
             description: taskData.description,
-            completed: false
+            completed: false,
+            group: groupId
         })
         return response.data
     } catch (error) {
@@ -228,5 +241,58 @@ export const logout = () => {
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('username')
     localStorage.removeItem('email')
-    // Opcionalmente: redirigir a login o limpiar estado global
+    localStorage.removeItem('last_active_group')
 };
+
+export const fetchGroups = async () => {
+    try {
+        const response = await api.get('groups/')
+        return response.data || []
+    } catch (error) {
+        console.error('Error fetching groups: ', error)
+        return []
+    }
+}
+
+export const createGroup = async (groupData) => {
+    try {
+        const response = await api.post('groups/', {
+            name: groupData.name,
+            color: groupData.color || null
+        })
+        return response.data
+    } catch (error) {
+        console.error("Error creating group: ", error)
+    }
+}
+
+export const updateGroup = async (groupData, groupId) => {
+    try {
+        const response = await api.patch(`groups/${groupId}/`, {
+            name: groupData.name,
+            color: groupData.color || null
+        })
+        return response.data
+    } catch (error) {
+        console.error("Error updating group: ", error)
+    }
+}
+
+export const deleteGroup = async (groupId) => {
+    try {
+        await api.delete(`groups/${groupId}/`)
+        return true
+    } catch (error) {
+        console.error('Error deleting group: ', error)
+        throw error
+    }
+}
+
+export const reorderGroups = async (groupIds) => {
+    try {
+        const response = await api.patch('groups/reorder/', { group_ids: groupIds })
+        return response.data
+    } catch (error) {
+        console.error('Error reordering groups: ', error)
+    }
+}

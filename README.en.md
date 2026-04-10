@@ -18,6 +18,7 @@ This project is part of my personal portfolio and is designed to demonstrate my 
 - **Secure Authentication** User registration and login with JWT (access + refresh tokens)
 - **Complete Task Management** Create, edit, complete and delete tasks in real-time `(CRUD)`
 - **Task Status Control** Mark tasks as completed or pending
+- **Task Groups** Organize tasks into customizable tabs with colors
 - **AI Assistant** AI-powered task suggestions (OpenRouter / LLM)
 - **Protected Routes** Exclusive access for authenticated users
 - **Robust Validation** Form validation with `Zod` schemas
@@ -440,6 +441,11 @@ All tests pass correctly on each run.
 | POST   | `/api/tasks/`           | Create task                  |
 | PUT    | `/api/tasks/{id}/`      | Update task                  |
 | DELETE | `/api/tasks/{id}/`      | Delete task                  |
+| GET    | `/api/groups/`          | List groups                 |
+| POST   | `/api/groups/`          | Create group                |
+| PATCH  | `/api/groups/{id}/`     | Update group              |
+| DELETE | `/api/groups/{id}/`     | Delete group              |
+| PATCH  | `/api/groups/reorder/`   | Reorder groups             |
 | POST   | `/api/ai/suggest-task/` | AI-powered task suggestion   |
 | GET    | `/api/schema/`          | OpenAPI schema               |
 | GET    | `/api/docs/`            | Swagger UI                   |

@@ -441,6 +441,11 @@ Todos los tests pasan correctamente en cada ejecución.
 | POST   | `/api/tasks/`           | Crear tarea                  |
 | PUT    | `/api/tasks/{id}/`      | Actualizar tarea             |
 | DELETE | `/api/tasks/{id}/`      | Eliminar tarea               |
+| GET    | `/api/groups/`          | Listar grupos                |
+| POST   | `/api/groups/`          | Crear grupo                 |
+| PATCH  | `/api/groups/{id}/`     | Actualizar grupo            |
+| DELETE | `/api/groups/{id}/`     | Eliminar grupo              |
+| PATCH  | `/api/groups/reorder/`   | Reordenar grupos            |
 | POST   | `/api/ai/suggest-task/` | Sugerencia de tarea con IA   |
 | GET    | `/api/schema/`          | Esquema OpenAPI              |
 | GET    | `/api/docs/`            | Swagger UI                   |

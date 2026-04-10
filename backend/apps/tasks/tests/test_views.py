@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from ..models import Task
+from ..models import Task, TaskGroup
 
 
 class TaskViewSetTests(APITestCase):
@@ -189,3 +189,160 @@ class TaskViewSetTests(APITestCase):
         # El campo user es read-only, así que no debe cambiar
         self.task.refresh_from_db()
         self.assertEqual(self.task.user, self.user)
+
+
+class TaskGroupViewSetTests(APITestCase):
+    """Tests para el TaskGroupViewSet."""
+
+    def setUp(self):
+        """Configura los datos de prueba."""
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass123",
+        )
+        self.other_user = User.objects.create_user(
+            username="otheruser",
+            email="other@example.com",
+            password="otherpass123",
+        )
+        self.group = TaskGroup.objects.create(
+            user=self.user,
+            name="Work",
+            color="#FF5733",
+        )
+        self.other_group = TaskGroup.objects.create(
+            user=self.other_user,
+            name="Other Group",
+        )
+
+    def test_list_groups_unauthenticated(self):
+        """Test: listar grupos sin autenticar retorna 401."""
+        response = self.client.get("/api/groups/")
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_list_groups_authenticated(self):
+        """Test: usuario autenticado puede listar sus grupos."""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get("/api/groups/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["name"], "Work")
+
+    def test_list_groups_only_own_groups(self):
+        """Test: usuario solo ve sus propios grupos."""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get("/api/groups/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        # No debe incluir el grupo de otro usuario
+        group_names = [group["name"] for group in response.data]
+        self.assertNotIn("Other Group", group_names)
+
+    def test_create_group_authenticated(self):
+        """Test: usuario autenticado puede crear grupo."""
+        self.client.force_authenticate(user=self.user)
+        data = {
+            "name": "Personal",
+            "color": "#00FF00",
+        }
+        response = self.client.post("/api/groups/", data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["name"], "Personal")
+        self.assertEqual(response.data["color"], "#00FF00")
+
+    def test_create_group_sets_position_automatically(self):
+        """Test: el grupo se crea con position automática."""
+        self.client.force_authenticate(user=self.user)
+        data = {
+            "name": "New Group",
+        }
+        response = self.client.post("/api/groups/", data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["position"], 1)
+
+    def test_create_group_name_required(self):
+        """Test: name es requerido al crear grupo."""
+        self.client.force_authenticate(user=self.user)
+        data = {
+            "color": "#FF5733",
+        }
+        response = self.client.post("/api/groups/", data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("name", response.data)
+
+    def test_update_group(self):
+        """Test: actualizar un grupo."""
+        self.client.force_authenticate(user=self.user)
+        data = {
+            "name": "Updated Work",
+            "color": "#00FF00",
+        }
+        response = self.client.patch(f"/api/groups/{self.group.id}/", data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.group.refresh_from_db()
+        self.assertEqual(self.group.name, "Updated Work")
+        self.assertEqual(self.group.color, "#00FF00")
+
+    def test_update_other_user_group_forbidden(self):
+        """Test: no se puede actualizar grupo de otro usuario."""
+        self.client.force_authenticate(user=self.user)
+        data = {
+            "name": "Hacked Name",
+        }
+        response = self.client.patch(f"/api/groups/{self.other_group.id}/", data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_group(self):
+        """Test: eliminar un grupo."""
+        self.client.force_authenticate(user=self.user)
+        group_id = self.group.id
+        response = self.client.delete(f"/api/groups/{group_id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(TaskGroup.objects.filter(id=group_id).exists())
+
+    def test_delete_other_user_group_forbidden(self):
+        """Test: no se puede eliminar grupo de otro usuario."""
+        self.client.force_authenticate(user=self.user)
+        response = self.client.delete(f"/api/groups/{self.other_group.id}/")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # El grupo del otro usuario no debe ser eliminado
+        self.assertTrue(TaskGroup.objects.filter(id=self.other_group.id).exists())
+
+    def test_reorder_groups(self):
+        """Test: reordenar grupos."""
+        group2 = TaskGroup.objects.create(
+            user=self.user,
+            name="Second Group",
+            position=1,
+        )
+        self.client.force_authenticate(user=self.user)
+        data = {
+            "group_ids": [group2.id, self.group.id],
+        }
+        response = self.client.patch("/api/groups/reorder/", data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.group.refresh_from_db()
+        group2.refresh_from_db()
+        self.assertEqual(self.group.position, 1)
+        self.assertEqual(group2.position, 0)
+
+    def test_reorder_groups_requires_group_ids(self):
+        """Test: reorder requiere group_ids."""
+        self.client.force_authenticate(user=self.user)
+        data: dict = {}
+        response = self.client.patch("/api/groups/reorder/", data, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("error", response.data)
