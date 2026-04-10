@@ -18,6 +18,7 @@ Este proyecto es parte de mi portafolio personal y está diseñado para demostra
 - **Autenticación segura** Registro e inicio de sesión con JWT (access + refresh tokens)
 - **Gestión completa de tareas** Crear, editar, completar y eliminar en tiempo real `(CRUD)`
 - **Control de estado** Marcar tareas como completadas o no completadas
+- **Grupos de tareas** Organizar tareas en pestañas personalizadas con colores
 - **Asistente IA** Sugerencias de tareas con IA integrada (OpenRouter / LLM)
 - **Rutas protegidas** Acceso exclusivo para usuarios autenticados
 - **Validación robusta** Formularios validados con esquemas `Zod`
