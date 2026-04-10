@@ -70,7 +70,7 @@ else
     BACKEND_SCRIPT = backend/scripts/build_backend.sh
 	ENV_SCRIPT   = scripts/setup_env.sh
 	# Activate backend venv and run command in one line (POSIX sh compatible)
-	run_in_venv = cd backend && . .venv/bin/activate && DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) $(1)
+	run_in_venv = . .venv/bin/activate && cd backend && DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) $(1)
 endif
 
 # =========================================================================
