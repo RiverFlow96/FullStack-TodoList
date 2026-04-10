@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { createTask, fetchTasks, updateTask, deleteTask } from "../api/axios";
+import { createTask, fetchTasks, updateTask, deleteTask, fetchGroups, createGroup, updateGroup, deleteGroup, reorderGroups } from "../api/axios";
 import { login as apiLogin, logout as apiLogout, register as apiRegister } from "../api/axios";
 
 export const useAuthStore = create((set) => ({
@@ -58,6 +58,8 @@ export const useAuthStore = create((set) => ({
 
 export const useTaskStore = create((set, get) => ({
     tasks: [],
+    groups: [],
+    activeGroup: null,
     loading: false,
     error: null,
     sort_by: "created_at",
@@ -69,11 +71,84 @@ export const useTaskStore = create((set, get) => ({
     setOrderBy: (value) => set(() => ({ order_by: value })),
     setFilterBy: (value) => set(() => ({ filter_by: value })),
     setSearchQuery: (value) => set(() => ({ search_query: value })),
+    setActiveGroup: (groupId) => {
+        localStorage.setItem('last_active_group', groupId)
+        set(() => ({ activeGroup: groupId }))
+    },
+
+    fetchGroups: async () => {
+        try {
+            const groups = await fetchGroups() || []
+            const lastActive = localStorage.getItem('last_active_group')
+            const activeGroup = lastActive && groups.some(g => g.id.toString() === lastActive)
+                ? parseInt(lastActive)
+                : (groups.length > 0 ? groups[0].id : null)
+            set({ groups, activeGroup })
+        } catch (err) {
+            console.error('Error fetching groups:', err)
+            set({ groups: [], activeGroup: null })
+        }
+    },
+
+    addGroup: async (groupData) => {
+        try {
+            const newGroup = await createGroup(groupData)
+            set({ groups: [...get().groups, newGroup] })
+            return newGroup
+        } catch (err) {
+            console.error('Error creating group:', err)
+        }
+    },
+
+    editGroup: async (updates, groupId) => {
+        try {
+            const updated = await updateGroup(updates, groupId)
+            set({ groups: get().groups.map(g => g.id === groupId ? updated : g) })
+        } catch (err) {
+            console.error('Error updating group:', err)
+        }
+    },
+
+    removeGroup: async (groupId) => {
+        try {
+            await deleteGroup(groupId)
+            const remaining = get().groups.filter(g => g.id !== groupId)
+            const newActive = get().activeGroup === groupId
+                ? (remaining.length > 0 ? remaining[0].id : null)
+                : get().activeGroup
+            set({ groups: remaining, activeGroup: newActive })
+            if (get().activeGroup === null) {
+                localStorage.removeItem('last_active_group')
+            }
+        } catch (err) {
+            console.error('Error deleting group:', err)
+        }
+    },
+
+    reorderGroups: async (groupIds) => {
+        try {
+            await reorderGroups(groupIds)
+            const reordered = groupIds.map((id, idx) => {
+                const group = get().groups.find(g => g.id === id)
+                return group && { ...group, position: idx }
+            })
+            set({ groups: reordered })
+        } catch (err) {
+            console.error('Error reordering groups:', err)
+        }
+    },
 
     fetchTasks: async () => {
         set({ loading: true, error: null })
         try {
-            const tasks = await fetchTasks()
+            const activeGroup = get().activeGroup
+            let tasks
+            if (activeGroup) {
+                tasks = await fetchTasks()
+                tasks = tasks.filter(t => t.group === activeGroup)
+            } else {
+                tasks = await fetchTasks()
+            }
             set({ tasks, loading: false })
         } catch (err) {
             set({ error: err.message, loading: false })
@@ -83,7 +158,8 @@ export const useTaskStore = create((set, get) => ({
     addTask: async (taskData) => {
         set({ loading: true, error: null })
         try {
-            const newTask = await createTask(taskData)
+            const groupId = get().activeGroup
+            const newTask = await createTask(taskData, groupId)
             set({ tasks: [newTask, ...get().tasks], loading: false })
             return true
         } catch (err) {

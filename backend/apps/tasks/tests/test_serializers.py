@@ -5,8 +5,8 @@ Tests para los serializers de la aplicación tasks.
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from ..models import Task
-from ..serializers import TaskSerializer
+from ..models import Task, TaskGroup
+from ..serializers import TaskGroupSerializer, TaskSerializer
 
 
 class TaskSerializerTests(TestCase):
@@ -39,7 +39,7 @@ class TaskSerializerTests(TestCase):
     def test_serializer_contains_expected_fields(self):
         """Test: el serializer contiene los campos esperados."""
         serializer = TaskSerializer(self.task)
-        expected_fields = {"id", "user", "title", "description", "completed", "created_at", "updated_at"}
+        expected_fields = {"id", "user", "group", "title", "description", "completed", "created_at", "updated_at"}
 
         self.assertEqual(set(serializer.data.keys()), expected_fields)
 
@@ -145,3 +145,89 @@ class TaskSerializerTests(TestCase):
         serializer.is_valid()
         # Si es válido, debería haber convertido "yes" a True o False
         # Si no es válido, debería estar en los errores
+
+
+class TaskGroupSerializerTests(TestCase):
+    """Tests para el serializer TaskGroupSerializer."""
+
+    def setUp(self):
+        """Configura los datos de prueba."""
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass123",
+        )
+        self.group = TaskGroup.objects.create(
+            user=self.user,
+            name="Work",
+            color="#FF5733",
+        )
+
+    def test_group_serializer_valid_data(self):
+        """Test: serializar un grupo válido."""
+        serializer = TaskGroupSerializer(self.group)
+        data = serializer.data
+
+        self.assertEqual(data["name"], "Work")
+        self.assertEqual(data["color"], "#FF5733")
+
+    def test_group_serializer_contains_expected_fields(self):
+        """Test: el serializer contiene los campos esperados."""
+        serializer = TaskGroupSerializer(self.group)
+        expected_fields = {"id", "user", "name", "color", "position", "created_at", "updated_at"}
+
+        self.assertEqual(set(serializer.data.keys()), expected_fields)
+
+    def test_group_serializer_name_required(self):
+        """Test: name es requerido."""
+        data = {
+            "color": "#FF5733",
+        }
+        serializer = TaskGroupSerializer(data=data)
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("name", serializer.errors)
+
+    def test_group_serializer_name_max_length(self):
+        """Test: name tiene un máximo de 50 caracteres."""
+        data = {
+            "name": "a" * 51,
+        }
+        serializer = TaskGroupSerializer(data=data)
+
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("name", serializer.errors)
+
+    def test_group_serializer_color_can_be_blank(self):
+        """Test: color puede estar en blanco."""
+        data = {
+            "name": "Test Group",
+            "color": "",
+        }
+        serializer = TaskGroupSerializer(data=data)
+
+        self.assertTrue(serializer.is_valid())
+
+    def test_group_serializer_position_default(self):
+        """Test: position tiene valor por defecto."""
+        data = {
+            "name": "New Group",
+        }
+        serializer = TaskGroupSerializer(data=data)
+
+        self.assertTrue(serializer.is_valid())
+        # position no está en validated_data, se asignará en perform_create
+
+    def test_group_serializer_update_group(self):
+        """Test: actualizar un grupo existente."""
+        data = {
+            "name": "Updated Work",
+            "color": "#00FF00",
+        }
+        serializer = TaskGroupSerializer(self.group, data=data, partial=True)
+
+        self.assertTrue(serializer.is_valid())
+        updated_group = serializer.save()
+
+        self.assertEqual(updated_group.name, "Updated Work")
+        self.assertEqual(updated_group.color, "#00FF00")
