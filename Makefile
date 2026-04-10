@@ -70,7 +70,7 @@ else
     BACKEND_SCRIPT = backend/scripts/build_backend.sh
 	ENV_SCRIPT   = scripts/setup_env.sh
 	# Activate backend venv and run command in one line (POSIX sh compatible)
-	run_in_venv = cd backend && . .venv/bin/activate && DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) $(1)
+	run_in_venv = . .venv/bin/activate && cd backend && DJANGO_SETTINGS_MODULE=$(DJANGO_SETTINGS_MODULE) $(1)
 endif
 
 # =========================================================================
@@ -181,9 +181,9 @@ endif
 build-backend:
 	$(call _banner,Build Backend)
 ifeq ($(DETECTED_OS),Windows)
-	@pwsh -NoProfile -Command "if (Test-Path 'backend\.venv') { Set-Location backend; & .\.venv\Scripts\Activate.ps1; & .\scripts\build_backend.ps1 } else { Write-Host 'ERROR: Virtual environment not found. Run make build-venv first'; exit 1 }"
+	@pwsh -NoProfile -Command "if (Test-Path '.venv') { Set-Location backend; & ..\.venv\Scripts\Activate.ps1; & .\scripts\build_backend.ps1 } else { Write-Host 'ERROR: Virtual environment not found. Run make build-venv first'; exit 1 }"
 else
-	@if [ -d "backend/.venv" ]; then cd backend && source .venv/bin/activate && bash scripts/build_backend.sh; else $(call _fail,Virtual environment not found. Run 'make build-venv' first.); fi
+	@if [ -d ".venv" ]; then source .venv/bin/activate && cd backend && bash scripts/build_backend.sh; else $(call _fail,Virtual environment not found. Run 'make build-venv' first.); fi
 endif
 	$(call _ok,Backend build complete)
 	$(call _done)
@@ -323,7 +323,7 @@ clean-db:
 
 clean-venv:
 	$(call _section,Clean Virtual Environment)
-	@$(call _rm_dir,$(call FIXPATH,backend/.venv))
+	@$(call _rm_dir,$(call FIXPATH,.venv))
 	$(call _ok,Virtual environment removed)
 	$(call _done)
 
