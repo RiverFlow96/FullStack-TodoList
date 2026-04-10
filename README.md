@@ -242,11 +242,12 @@ El archivo `frontend/public/_redirects` está configurado para redirigir todas l
 
 ## Testing
 
-### Backend Testing
+<details>
+<summary><strong> Backend Testing</strong></summary>
 
 El backend usa **pytest** y **pytest-django** para pruebas unitarias e integración.
 
-#### Ejecutar pruebas
+### Ejecutar pruebas
 
 ```bash
 # Ejecutar todas las pruebas del backend
@@ -263,7 +264,7 @@ pytest backend/apps/tasks/tests/test_models.py -v
 pytest backend/apps/tasks/tests/ -k "test_creation" -v
 ```
 
-#### Estructura de pruebas del backend
+### Estructura de pruebas del backend
 
 ```tree
 backend/apps/tasks/
@@ -277,7 +278,7 @@ backend/apps/tasks/
 └── views.py
 ```
 
-#### Cobertura de pruebas - Backend
+### Cobertura de pruebas - Backend
 
 | Componente | Cobertura | Tests | Estado |
 |-----------|-----------|-------|--------|
@@ -288,7 +289,7 @@ backend/apps/tasks/
 
 Informe de cobertura completo: `/htmlcov/index.html`
 
-#### Ejemplo de prueba (Backend)
+### Ejemplo de prueba (Backend)
 
 ```python
 from django.test import TestCase
@@ -314,11 +315,13 @@ class TaskModelTests(TestCase):
         self.assertFalse(task.completed)
 ```
 
-### Frontend Testing
+</details>
+<details>
+<summary><strong>Frontend Testing</strong></summary>
 
 El frontend usa **Vitest** para pruebas unitarias de componentes React.
 
-#### Ejecutar pruebas
+### Ejecutar pruebas del frontend
 
 ```bash
 cd frontend
@@ -336,7 +339,7 @@ npm run test:run
 npm run test:run -- -t "TaskCard"
 ```
 
-#### Estructura de pruebas del frontend
+### Estructura de pruebas del frontend
 
 ```tree
 frontend/src/
@@ -349,7 +352,7 @@ frontend/src/
         └── schema.test.js         # Pruebas de validación Zod (15 tests)
 ```
 
-#### Cobertura de pruebas - Frontend
+### Cobertura de pruebas - Frontend
 
 | Componente | Cobertura | Tests | Estado |
 |-----------|-----------|-------|--------|
@@ -360,7 +363,7 @@ frontend/src/
 
 Informe de cobertura: `/frontend/coverage/index.html`
 
-#### Ejemplo de prueba (Frontend)
+### Ejemplo de prueba (Frontend)
 
 ```typescript
 import { describe, it, expect } from 'vitest'
@@ -393,7 +396,7 @@ describe('TaskCard Component', () => {
 })
 ```
 
-#### Configuración de Vitest
+### Configuración de Vitest
 
 El archivo `frontend/vitest.config.ts` incluye:
 
@@ -410,6 +413,8 @@ export default defineConfig({
   },
 })
 ```
+
+</details>
 
 ### Resumen de Pruebas
 

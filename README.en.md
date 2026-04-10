@@ -242,11 +242,12 @@ The `frontend/public/_redirects` file is configured to redirect all routes to `i
 
 ## Testing
 
-### Backend Testing
+<details>
+<summary><strong>Backend Testing</strong></summary>
 
 The backend uses **pytest** and **pytest-django** for unit and integration testing.
 
-#### Running Tests
+### Running Tests
 
 ```bash
 # Run all backend tests
@@ -263,7 +264,7 @@ pytest backend/apps/tasks/tests/test_models.py -v
 pytest backend/apps/tasks/tests/ -k "test_creation" -v
 ```
 
-#### Backend Test Structure
+### Backend Test Structure
 
 ```tree
 backend/apps/tasks/
@@ -277,7 +278,7 @@ backend/apps/tasks/
 └── views.py
 ```
 
-#### Backend Test Coverage
+### Backend Test Coverage
 
 | Component | Coverage | Tests | Status |
 |-----------|----------|-------|--------|
@@ -288,7 +289,7 @@ backend/apps/tasks/
 
 Full coverage report: `/htmlcov/index.html`
 
-#### Backend Test Example
+### Backend Test Example
 
 ```python
 from django.test import TestCase
@@ -314,11 +315,13 @@ class TaskModelTests(TestCase):
         self.assertFalse(task.completed)
 ```
 
-### Frontend Testing
+</details>
+<details>
+<summary><strong>Frontend Testing</strong></summary>
 
 The frontend uses **Vitest** for React component unit testing.
 
-#### Running Tests
+### Running Frontend Tests
 
 ```bash
 cd frontend
@@ -336,7 +339,7 @@ npm run test:run
 npm run test:run -- -t "TaskCard"
 ```
 
-#### Frontend Test Structure
+### Frontend Test Structure
 
 ```tree
 frontend/src/
@@ -349,7 +352,7 @@ frontend/src/
         └── schema.test.js         # Zod validation tests (15 tests)
 ```
 
-#### Frontend Test Coverage
+### Frontend Test Coverage
 
 | Component | Coverage | Tests | Status |
 |-----------|----------|-------|--------|
@@ -360,7 +363,7 @@ frontend/src/
 
 Coverage report: `/frontend/coverage/index.html`
 
-#### Frontend Test Example
+### Frontend Test Example
 
 ```typescript
 import { describe, it, expect } from 'vitest'
@@ -393,7 +396,7 @@ describe('TaskCard Component', () => {
 })
 ```
 
-#### Vitest Configuration
+### Vitest Configuration
 
 The `frontend/vitest.config.ts` file includes:
 
@@ -410,6 +413,8 @@ export default defineConfig({
   },
 })
 ```
+
+</details>
 
 ### Testing Summary
 
