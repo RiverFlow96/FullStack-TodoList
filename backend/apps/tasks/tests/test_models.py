@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.utils import timezone
 
-from ..models import Task
+from ..models import Task, TaskGroup
 
 
 class TaskModelTests(TestCase):
@@ -164,3 +164,160 @@ class TaskModelTests(TestCase):
         # La tarea más nueva debe aparecer primero
         self.assertEqual(all_tasks[0].id, task2.id)
         self.assertEqual(all_tasks[1].id, task1.id)
+
+
+class TaskGroupModelTests(TestCase):
+    """Tests para el modelo TaskGroup."""
+
+    def setUp(self):
+        """Configura los datos de prueba."""
+        self.user = User.objects.create_user(
+            username="testuser",
+            email="test@example.com",
+            password="testpass123",
+        )
+
+    def test_task_group_creation(self):
+        """Test: crear un grupo de tareas correctamente."""
+        group = TaskGroup.objects.create(
+            user=self.user,
+            name="Work",
+            color="#FF5733",
+        )
+
+        self.assertEqual(group.name, "Work")
+        self.assertEqual(group.color, "#FF5733")
+        self.assertEqual(group.user, self.user)
+
+    def test_task_group_str_representation(self):
+        """Test: representación en string del modelo TaskGroup."""
+        group = TaskGroup.objects.create(
+            user=self.user,
+            name="Personal",
+        )
+
+        self.assertEqual(str(group), "Personal")
+
+    def test_task_group_color_can_be_blank(self):
+        """Test: el color puede estar vacío."""
+        group = TaskGroup.objects.create(
+            user=self.user,
+            name="No Color Group",
+        )
+
+        self.assertIsNone(group.color)
+
+    def test_task_group_default_position_is_zero(self):
+        """Test: la posición por defecto es 0."""
+        group = TaskGroup.objects.create(
+            user=self.user,
+            name="Test Group",
+        )
+
+        self.assertEqual(group.position, 0)
+
+    def test_task_group_created_at_is_set_automatically(self):
+        """Test: created_at se asigna automáticamente."""
+        before_creation = timezone.now()
+        group = TaskGroup.objects.create(
+            user=self.user,
+            name="Test Group",
+        )
+        after_creation = timezone.now()
+
+        self.assertIsNotNone(group.created_at)
+        self.assertGreaterEqual(group.created_at, before_creation)
+        self.assertLessEqual(group.created_at, after_creation)
+
+    def test_task_group_updated_at_is_set_automatically(self):
+        """Test: updated_at se asigna automáticamente."""
+        group = TaskGroup.objects.create(
+            user=self.user,
+            name="Test Group",
+        )
+        original_updated_at = group.updated_at
+
+        import time
+
+        time.sleep(0.1)
+
+        group.name = "Updated Name"
+        group.save()
+
+        group.refresh_from_db()
+        self.assertGreater(group.updated_at, original_updated_at)
+
+    def test_task_group_cascade_delete_with_user(self):
+        """Test: eliminar usuario elimina sus grupos."""
+        group = TaskGroup.objects.create(
+            user=self.user,
+            name="Test Group",
+        )
+
+        group_id = group.id
+        self.user.delete()
+
+        self.assertFalse(TaskGroup.objects.filter(id=group_id).exists())
+
+    def test_task_group_max_name_length(self):
+        """Test: el nombre tiene un máximo de 50 caracteres."""
+        long_name = "a" * 51
+        group = TaskGroup(
+            user=self.user,
+            name=long_name,
+        )
+
+        from django.core.exceptions import ValidationError
+
+        with self.assertRaises(ValidationError):
+            group.full_clean()
+
+    def test_multiple_groups_per_user(self):
+        """Test: un usuario puede tener múltiples grupos."""
+        group1 = TaskGroup.objects.create(
+            user=self.user,
+            name="Group 1",
+        )
+        group2 = TaskGroup.objects.create(
+            user=self.user,
+            name="Group 2",
+        )
+
+        user_groups = TaskGroup.objects.filter(user=self.user)
+        self.assertEqual(user_groups.count(), 2)
+        self.assertIn(group1, user_groups)
+        self.assertIn(group2, user_groups)
+
+    def test_groups_ordered_by_position(self):
+        """Test: los grupos se ordenan por position."""
+        group1 = TaskGroup.objects.create(
+            user=self.user,
+            name="First",
+            position=2,
+        )
+        group2 = TaskGroup.objects.create(
+            user=self.user,
+            name="Second",
+            position=1,
+        )
+
+        all_groups = list(TaskGroup.objects.all())
+
+        self.assertEqual(all_groups[0].id, group2.id)
+        self.assertEqual(all_groups[1].id, group1.id)
+
+    def test_unique_group_name_per_user(self):
+        """Test: un usuario no puede tener dos grupos con el mismo nombre."""
+        TaskGroup.objects.create(
+            user=self.user,
+            name="Duplicate",
+        )
+
+        from django.db import IntegrityError
+
+        duplicate = TaskGroup(
+            user=self.user,
+            name="Duplicate",
+        )
+        with self.assertRaises(IntegrityError):
+            duplicate.save()

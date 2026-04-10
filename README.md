@@ -18,6 +18,7 @@ Este proyecto es parte de mi portafolio personal y está diseñado para demostra
 - **Autenticación segura** Registro e inicio de sesión con JWT (access + refresh tokens)
 - **Gestión completa de tareas** Crear, editar, completar y eliminar en tiempo real `(CRUD)`
 - **Control de estado** Marcar tareas como completadas o no completadas
+- **Grupos de tareas** Organizar tareas en pestañas personalizadas con colores
 - **Asistente IA** Sugerencias de tareas con IA integrada (OpenRouter / LLM)
 - **Rutas protegidas** Acceso exclusivo para usuarios autenticados
 - **Validación robusta** Formularios validados con esquemas `Zod`
@@ -440,6 +441,11 @@ Todos los tests pasan correctamente en cada ejecución.
 | POST   | `/api/tasks/`           | Crear tarea                  |
 | PUT    | `/api/tasks/{id}/`      | Actualizar tarea             |
 | DELETE | `/api/tasks/{id}/`      | Eliminar tarea               |
+| GET    | `/api/groups/`          | Listar grupos                |
+| POST   | `/api/groups/`          | Crear grupo                 |
+| PATCH  | `/api/groups/{id}/`     | Actualizar grupo            |
+| DELETE | `/api/groups/{id}/`     | Eliminar grupo              |
+| PATCH  | `/api/groups/reorder/`   | Reordenar grupos            |
 | POST   | `/api/ai/suggest-task/` | Sugerencia de tarea con IA   |
 | GET    | `/api/schema/`          | Esquema OpenAPI              |
 | GET    | `/api/docs/`            | Swagger UI                   |

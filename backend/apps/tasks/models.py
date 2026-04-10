@@ -1,14 +1,39 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-# Create your models here.
+
+class TaskGroup(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="task_groups",
+    )
+    name = models.CharField(max_length=50)
+    color = models.CharField(max_length=7, blank=True, null=True)
+    position = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["position", "created_at"]
+        unique_together = ["user", "name"]
+
+    def __str__(self):
+        return self.name
 
 
 class Task(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="tasks",  # permite acceder a las tareas desde user.tasks.all()
+        related_name="tasks",
+    )
+    group = models.ForeignKey(
+        TaskGroup,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="tasks",
     )
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)

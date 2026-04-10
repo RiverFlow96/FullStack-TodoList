@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTaskStore } from "../store/useStore";
 import TaskCard from "../components/TaskCard";
+import TaskGroupTabs from "../components/TaskGroupTabs";
 import Spinner from "../components/Spinner";
 import { PlusIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -12,14 +13,18 @@ export function TaskLayout() {
     const navigate = useNavigate()
     const [isAIModalOpen, setIsAIModalOpen] = useState(false)
 
-    const { tasks, fetchTasks, loading, error, order_by, sort_by, filter_by, search_query } = useTaskStore()
+    const { tasks, fetchTasks, fetchGroups, loading, error, order_by, sort_by, filter_by, search_query } = useTaskStore()
 
     useEffect(() => {
+        fetchGroups()
         fetchTasks()
-    }, [fetchTasks])
+    }, [fetchTasks, fetchGroups])
 
     // Filtrar y ordenar tareas
     const processTasks = (tasksToProcess) => {
+        if (!tasksToProcess || !Array.isArray(tasksToProcess)) {
+            return []
+        }
         let result = [...tasksToProcess]
 
         // Aplicar filtro
@@ -88,6 +93,7 @@ export function TaskLayout() {
 
     return (
         <div className="w-full min-h-screen p-4 bg-gray-100">
+            <TaskGroupTabs />
             {processedTasks.length === 0 ? (
                 <div className="w-full h-[80dvh] flex justify-center items-center">
                     <p className="font-bold font-sans text-2xl md:text-4xl text-gray-400">No tasks found</p>

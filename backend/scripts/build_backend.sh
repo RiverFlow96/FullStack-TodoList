@@ -4,6 +4,9 @@ set -o errexit
 # Moverse al directorio raíz del proyecto
 cd "$(dirname "$0")/../.."
 
+# Activar entorno virtual
+source .venv/bin/activate
+
 # Instalar dependencias base + producción
 pip install ".[prod]"
 
