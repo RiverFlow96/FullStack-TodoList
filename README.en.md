@@ -271,9 +271,9 @@ pytest backend/apps/tasks/tests/ -k "test_creation" -v
 backend/apps/tasks/
 ├── tests/
 │   ├── __init__.py
-│   ├── test_models.py       # Task model tests (11 tests)
-│   ├── test_serializers.py  # Serializer tests (11 tests)
-│   └── test_views.py        # API endpoint tests (15 tests)
+│   ├── test_models.py       # Model tests (22 tests)
+│   ├── test_serializers.py  # Serializer tests (18 tests)
+│   └── test_views.py        # API endpoint tests (30 tests)
 ├── models.py
 ├── serializers.py
 └── views.py
@@ -281,12 +281,7 @@ backend/apps/tasks/
 
 ### Backend Test Coverage
 
-| Component | Coverage | Tests | Status |
-|-----------|----------|-------|--------|
-| Tasks Models | 100% | 11 | ✅ Complete |
-| Tasks Serializers | 100% | 11 | ✅ Complete |
-| Tasks Views | 100% | 15 | ✅ Complete |
-| **Total Tasks App** | **100%** | **37** | **✅ Complete** |
+The complete backend suite passed **77 tests** with **55% overall coverage** on November 21, 2026. This includes modules that still lack tests, such as the AI assistant and production settings.
 
 Full coverage report: `/htmlcov/index.html`
 
@@ -355,12 +350,14 @@ frontend/src/
 
 ### Frontend Test Coverage
 
-| Component | Coverage | Tests | Status |
-|-----------|----------|-------|--------|
-| TaskCard | 100% | 9 | ✅ Complete |
-| Spinner | 100% | 6 | ✅ Complete |
-| Validation Schemas | 95% | 15 | ✅ Complete |
-| **Total Frontend** | **97.61%** | **30** | **✅ Complete** |
+| Measured file | Statement coverage | Tests |
+|---------------|--------------------|-------|
+| TaskCard | 92.85% | 9 |
+| Spinner | 100% | 6 |
+| Validation schemas | 100% | 15 |
+| **Measured files** | **97.61%** | **30** |
+
+Vitest coverage includes only files imported by these tests; it does not measure the entire React application.
 
 Coverage report: `/frontend/coverage/index.html`
 
@@ -419,13 +416,12 @@ export default defineConfig({
 
 ### Testing Summary
 
-| Stack | Framework | Tests | Coverage | Status |
-|-------|-----------|-------|----------|--------|
-| Backend | pytest | 37 | 100% | ✅ |
-| Frontend | Vitest | 30 | 97.61% | ✅ |
-| **Total** | - | **67** | **97%** | **✅** |
+| Stack | Framework | Passing tests | Measured coverage |
+|-------|-----------|---------------|-------------------|
+| Complete backend | pytest | 77 | 55% |
+| Measured frontend files | Vitest | 30 | 97.61% |
 
-All tests pass correctly on each run.
+Local results from November 21, 2026. Run the suites again to check the current state.
 
 ## API Endpoints
 

@@ -62,7 +62,7 @@ dist/
 Thumbs.db
 
 # == Project specific ==========================
-TODO.md
+AUDIT.md
 RUN_LOCAL.md
 run-local.sh
 .copilot-commit-message-instructions.md

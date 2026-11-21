@@ -271,9 +271,9 @@ pytest backend/apps/tasks/tests/ -k "test_creation" -v
 backend/apps/tasks/
 ├── tests/
 │   ├── __init__.py
-│   ├── test_models.py       # Pruebas del modelo Task (11 tests)
-│   ├── test_serializers.py  # Pruebas de serializers (11 tests)
-│   └── test_views.py        # Pruebas de endpoints API (15 tests)
+│   ├── test_models.py       # Pruebas de modelos (22 tests)
+│   ├── test_serializers.py  # Pruebas de serializers (18 tests)
+│   └── test_views.py        # Pruebas de endpoints API (30 tests)
 ├── models.py
 ├── serializers.py
 └── views.py
@@ -281,12 +281,7 @@ backend/apps/tasks/
 
 ### Cobertura de pruebas - Backend
 
-| Componente | Cobertura | Tests | Estado |
-|-----------|-----------|-------|--------|
-| Tasks Models | 100% | 11 | ✅ Completo |
-| Tasks Serializers | 100% | 11 | ✅ Completo |
-| Tasks Views | 100% | 15 | ✅ Completo |
-| **Total Tasks App** | **100%** | **37** | **✅ Completo** |
+La suite completa del backend pasó **77 pruebas** y obtuvo **55 % de cobertura total** el 21 de noviembre de 2026. Esta cifra incluye módulos todavía sin pruebas, como el asistente de IA y la configuración de producción.
 
 Informe de cobertura completo: `/htmlcov/index.html`
 
@@ -355,12 +350,14 @@ frontend/src/
 
 ### Cobertura de pruebas - Frontend
 
-| Componente | Cobertura | Tests | Estado |
-|-----------|-----------|-------|--------|
-| TaskCard | 100% | 9 | ✅ Completo |
-| Spinner | 100% | 6 | ✅ Completo |
-| Validation Schemas | 95% | 15 | ✅ Completo |
-| **Total Frontend** | **97.61%** | **30** | **✅ Completo** |
+| Archivo medido | Cobertura de instrucciones | Tests |
+|---------------|----------------------------|-------|
+| TaskCard | 92.85 % | 9 |
+| Spinner | 100 % | 6 |
+| Esquemas de validación | 100 % | 15 |
+| **Archivos medidos** | **97.61 %** | **30** |
+
+La cobertura de Vitest incluye solo los archivos importados por estas pruebas; no representa la cobertura de toda la aplicación React.
 
 Informe de cobertura: `/frontend/coverage/index.html`
 
@@ -419,13 +416,12 @@ export default defineConfig({
 
 ### Resumen de Pruebas
 
-| Stack | Framework | Pruebas | Cobertura | Status |
-|-------|-----------|---------|-----------|--------|
-| Backend | pytest | 37 | 100% | ✅ |
-| Frontend | Vitest | 30 | 97.61% | ✅ |
-| **Total** | - | **67** | **97%** | **✅** |
+| Stack | Framework | Pruebas aprobadas | Cobertura medida |
+|-------|-----------|-------------------|------------------|
+| Backend completo | pytest | 77 | 55 % |
+| Archivos frontend medidos | Vitest | 30 | 97.61 % |
 
-Todos los tests pasan correctamente en cada ejecución.
+Resultados locales del 21 de noviembre de 2026. Ejecuta las suites de nuevo para comprobar el estado actual.
 
 ## API Endpoints
 

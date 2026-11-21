@@ -115,6 +115,33 @@ class TaskViewSetTests(APITestCase):
         task = Task.objects.get(id=response.data["id"])
         self.assertEqual(task.user, self.user)
 
+    def test_create_task_rejects_another_users_group(self):
+        foreign_group = TaskGroup.objects.create(user=self.other_user, name="Private")
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.post(
+            "/api/tasks/",
+            {"title": "New Task", "group": foreign_group.id},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("group", response.data)
+        self.assertFalse(Task.objects.filter(user=self.user, title="New Task").exists())
+
+    def test_create_task_accepts_own_group(self):
+        own_group = TaskGroup.objects.create(user=self.user, name="Work")
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.post(
+            "/api/tasks/",
+            {"title": "New Task", "group": own_group.id},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["group"], own_group.id)
+
     def test_create_task_title_required(self):
         """Test: title es requerido al crear tarea."""
         self.client.force_authenticate(user=self.user)
@@ -164,6 +191,21 @@ class TaskViewSetTests(APITestCase):
         response: Response = self.client.patch(f"/api/tasks/{self.other_task.id}/", data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_update_task_rejects_another_users_group(self):
+        foreign_group = TaskGroup.objects.create(user=self.other_user, name="Private")
+        self.client.force_authenticate(user=self.user)
+
+        response = self.client.patch(
+            f"/api/tasks/{self.task.id}/",
+            {"group": foreign_group.id},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("group", response.data)
+        self.task.refresh_from_db()
+        self.assertIsNone(self.task.group)
 
     def test_delete_task(self):
         """Test: eliminar una tarea."""

@@ -69,7 +69,7 @@ Documentation = "https://github.com/RiverFlow96/FullStack-TodoList/wiki"
 Issues = "https://github.com/RiverFlow96/FullStack-TodoList/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["backend/tasks", "backend/todolistapi"]
+packages = ["backend/apps", "backend/config"]
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "todolistapi.settings"
