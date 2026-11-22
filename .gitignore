@@ -35,6 +35,7 @@ pnpm-debug.log*
 .pytest_cache/
 .coverage
 .coverage.*
+coverage.xml
 htmlcov/
 
 # == Linting & Type-checking cache ==============

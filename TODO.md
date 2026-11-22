@@ -55,6 +55,8 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 **Aceptación:** ejecución verde en GitHub Actions desde `main` y en un pull request; pytest, Vitest, Ruff, lint, build y `manage.py check` aparecen como controles requeridos; CodeQL completa análisis sin errores operativos.
 
+**Estado:** en `18f9599`, CI y CodeQL completaron correctamente en `main` (22 de noviembre de 2026). La integración GitHub no permite consultar protección de ramas (HTTP 403) y no hay una ejecución reciente de PR con el workflow actual; falta confirmar ambos puntos antes de cerrar la tarea.
+
 ### C-06. Mantener pruebas y cobertura basadas en resultados reales
 
 **Objetivo:** conservar evidencia actual y reproducible de calidad.
@@ -63,7 +65,7 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 **Aceptación:** ambos conjuntos pasan desde checkout limpio; reportes descargables muestran fecha/commit; README describe claramente que el 55 % backend es global y que el porcentaje frontend corresponde solo a archivos importados por pruebas.
 
-**Estado:** suite local ejecutada el 2026-11-22: pytest 77/77 y Vitest 30/30; cobertura global backend 55 %. Falta confirmar artefactos de cobertura y ejecución en GitHub Actions.
+**Estado:** el workflow ahora genera cobertura V8 para frontend y XML/HTML para backend, e incluye SHA en los nombres de artefactos. Verificación local del 2026-11-22: pytest 77/77 con 55 % global; Vitest 30/30 con 93.33 % de instrucciones, 90.24 % de ramas, 80 % de funciones y 92.1 % de líneas en los archivos importados por las pruebas. Falta confirmar la descarga de artefactos de una ejecución de GitHub Actions.
 
 ## Alta prioridad
 

@@ -281,9 +281,11 @@ backend/apps/tasks/
 
 ### Cobertura de pruebas - Backend
 
-La suite completa del backend pasó **77 pruebas** y obtuvo **55 % de cobertura total** el 21 de noviembre de 2026. Esta cifra incluye módulos todavía sin pruebas, como el asistente de IA y la configuración de producción.
+La suite completa del backend pasó **77 pruebas** y obtuvo **55 % de cobertura global** el 22 de noviembre de 2026. Esta cifra incluye módulos todavía sin pruebas, como el asistente de IA y la configuración de producción.
 
 Informe de cobertura completo: `/htmlcov/index.html`
+
+En GitHub Actions, descarga el artefacto `backend-coverage-<SHA del commit>` de la ejecución correspondiente; incluye el informe HTML y `backend/coverage.xml`.
 
 ### Ejemplo de prueba (Backend)
 
@@ -350,16 +352,13 @@ frontend/src/
 
 ### Cobertura de pruebas - Frontend
 
-| Archivo medido | Cobertura de instrucciones | Tests |
-|---------------|----------------------------|-------|
-| TaskCard | 92.85 % | 9 |
-| Spinner | 100 % | 6 |
-| Esquemas de validación | 100 % | 15 |
-| **Archivos medidos** | **97.61 %** | **30** |
+La ejecución del 22 de noviembre de 2026 pasó **30 pruebas**. En los tres archivos fuente importados por la suite, la cobertura fue: instrucciones 93.33 % (42/45), ramas 90.24 % (37/41), funciones 80 % (8/10) y líneas 92.1 % (35/38).
 
 La cobertura de Vitest incluye solo los archivos importados por estas pruebas; no representa la cobertura de toda la aplicación React.
 
 Informe de cobertura: `/frontend/coverage/index.html`
+
+En GitHub Actions, descarga el artefacto `frontend-coverage-<SHA del commit>` de la ejecución correspondiente; incluye el informe HTML y `lcov.info`.
 
 ### Ejemplo de prueba (Frontend)
 
@@ -419,9 +418,9 @@ export default defineConfig({
 | Stack | Framework | Pruebas aprobadas | Cobertura medida |
 |-------|-----------|-------------------|------------------|
 | Backend completo | pytest | 77 | 55 % |
-| Archivos frontend medidos | Vitest | 30 | 97.61 % |
+| Archivos frontend importados por las pruebas | Vitest | 30 | 93.33 % de instrucciones |
 
-Resultados locales del 21 de noviembre de 2026. Ejecuta las suites de nuevo para comprobar el estado actual.
+Resultados locales del 22 de noviembre de 2026. La cobertura frontend se limita a los archivos importados por la suite; la cobertura backend es global.
 
 ## API Endpoints
 

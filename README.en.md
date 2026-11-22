@@ -281,9 +281,11 @@ backend/apps/tasks/
 
 ### Backend Test Coverage
 
-The complete backend suite passed **77 tests** with **55% overall coverage** on November 21, 2026. This includes modules that still lack tests, such as the AI assistant and production settings.
+The complete backend suite passed **77 tests** with **55% global coverage** on November 22, 2026. This includes modules that still lack tests, such as the AI assistant and production settings.
 
 Full coverage report: `/htmlcov/index.html`
+
+In GitHub Actions, download the `backend-coverage-<commit SHA>` artifact from the corresponding run. It contains the HTML report and `backend/coverage.xml`.
 
 ### Backend Test Example
 
@@ -350,16 +352,13 @@ frontend/src/
 
 ### Frontend Test Coverage
 
-| Measured file | Statement coverage | Tests |
-|---------------|--------------------|-------|
-| TaskCard | 92.85% | 9 |
-| Spinner | 100% | 6 |
-| Validation schemas | 100% | 15 |
-| **Measured files** | **97.61%** | **30** |
+The November 22, 2026 run passed **30 tests**. Across the three source files imported by the suite, coverage was: statements 93.33% (42/45), branches 90.24% (37/41), functions 80% (8/10), and lines 92.1% (35/38).
 
 Vitest coverage includes only files imported by these tests; it does not measure the entire React application.
 
 Coverage report: `/frontend/coverage/index.html`
+
+In GitHub Actions, download the `frontend-coverage-<commit SHA>` artifact from the corresponding run. It contains the HTML report and `lcov.info`.
 
 ### Frontend Test Example
 
@@ -419,9 +418,9 @@ export default defineConfig({
 | Stack | Framework | Passing tests | Measured coverage |
 |-------|-----------|---------------|-------------------|
 | Complete backend | pytest | 77 | 55% |
-| Measured frontend files | Vitest | 30 | 97.61% |
+| Frontend files imported by tests | Vitest | 30 | 93.33% statements |
 
-Local results from November 21, 2026. Run the suites again to check the current state.
+Local results from November 22, 2026. Frontend coverage applies only to files imported by the suite; backend coverage is global.
 
 ## API Endpoints
 
