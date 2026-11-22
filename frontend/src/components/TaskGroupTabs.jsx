@@ -122,11 +122,12 @@ export default function TaskGroupTabs() {
             </button>
 
             {groups.map((group) => (
-                <div key={group.id} className="relative group">
+                <div key={group.id} className="relative group inline-flex items-center">
                     {editingId === group.id ? (
                         <div className="flex items-center gap-1 px-2 py-1.5 bg-gray-100 rounded-lg">
                             <input
                                 type="text"
+                                aria-label="Group name"
                                 value={editName}
                                 onChange={(e) => setEditName(e.target.value)}
                                 className="w-20 px-2 py-1 text-sm border rounded focus:ring-2 focus:ring-violet-500 focus:border-violet-500"
@@ -143,6 +144,8 @@ export default function TaskGroupTabs() {
                                 ))}
                             </div>
                             <button
+                                type="button"
+                                aria-label="Save group changes"
                                 onClick={handleEditSave}
                                 className="p-1 bg-green-500 rounded hover:bg-green-600 transition-colors"
                             >
@@ -156,37 +159,44 @@ export default function TaskGroupTabs() {
                             </button>
                         </div>
                     ) : (
-                        <button
-                            onClick={() => handleSelectGroup(group.id)}
-                            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${activeGroup === group.id
-                                ? isDarkColor(group.color) ? "text-white" : "text-gray-900"
-                                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                                }`}
-                            style={activeGroup === group.id && group.color
-                                ? { backgroundColor: group.color }
-                                : group.color
-                                    ? { borderLeft: `3px solid ${group.color}` }
-                                    : undefined
-                            }
-                        >
-                            <span className={activeGroup === group.id && group.color ? getTextColor(group.color) : ""}>{group.name}</span>
+                        <>
+                            <button
+                                type="button"
+                                aria-label={`Show tasks in ${group.name}`}
+                                aria-pressed={activeGroup === group.id}
+                                onClick={() => handleSelectGroup(group.id)}
+                                className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${activeGroup === group.id
+                                    ? isDarkColor(group.color) ? "text-white" : "text-gray-900"
+                                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                    }`}
+                                style={activeGroup === group.id && group.color
+                                    ? { backgroundColor: group.color }
+                                    : group.color
+                                        ? { borderLeft: `3px solid ${group.color}` }
+                                        : undefined
+                                }
+                            >
+                                <span className={activeGroup === group.id && group.color ? getTextColor(group.color) : ""}>{group.name}</span>
+                            </button>
                             <div className="hidden group-hover:flex items-center gap-0.5 ml-1">
                                 <button
+                                    type="button"
+                                    aria-label={`Edit group ${group.name}`}
                                     onClick={(e) => { e.stopPropagation(); handleEditStart(group) }}
                                     className="p-1 rounded hover:bg-white/30 transition-colors"
-                                    style={activeGroup === group.id && group.color ? { color: 'inherit' } : undefined}
                                 >
                                     <PencilIcon className="w-3 h-3" />
                                 </button>
                                 <button
+                                    type="button"
+                                    aria-label={`Delete group ${group.name}`}
                                     onClick={(e) => { e.stopPropagation(); handleDeleteGroup(group.id) }}
                                     className="p-1 rounded hover:bg-red-500 transition-colors hover:text-white"
-                                    style={activeGroup === group.id && group.color ? { color: 'inherit' } : undefined}
                                 >
                                     <X className="w-3 h-3" />
                                 </button>
                             </div>
-                        </button>
+                        </>
                     )}
                 </div>
             ))}

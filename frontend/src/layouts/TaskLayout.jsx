@@ -17,7 +17,9 @@ export function TaskLayout() {
 
     useEffect(() => {
         fetchGroups()
-        fetchTasks()
+        fetchTasks().catch(() => {
+            // The store records the request error for the visible error state below.
+        })
     }, [fetchTasks, fetchGroups])
 
     // Filtrar y ordenar tareas

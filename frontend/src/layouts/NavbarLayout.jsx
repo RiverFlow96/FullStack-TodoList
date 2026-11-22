@@ -98,7 +98,7 @@ export function NavbarLayout() {
                             <Link to="/profile/" className="p-2 hover:bg-violet-600 rounded-lg transition-colors">
                                 <UserCircle2 className="w-8 h-8" />
                             </Link>
-                            <button onClick={onLogout} className="p-2 hover:bg-violet-600 rounded-lg transition-colors">
+                            <button onClick={onLogout} aria-label="Log out" className="p-2 hover:bg-violet-600 rounded-lg transition-colors">
                                 <LogOut className="w-8 h-8" />
                             </button>
                         </div>
@@ -177,6 +177,7 @@ export function NavbarLayout() {
                                 </Link>
                                 <button
                                     onClick={() => { onLogout(); setMenuOpen(false); }}
+                                    aria-label="Log out"
                                     className="flex items-center gap-2 px-4 py-2 text-white hover:bg-violet-600 rounded-lg"
                                 >
                                     <LogOut className="w-5 h-5" />

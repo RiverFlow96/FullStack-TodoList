@@ -24,6 +24,8 @@ dist/
 dist-ssr/
 *.local
 frontend/coverage
+frontend/playwright-report/
+frontend/test-results/
 
 # == Logs ========================================
 *.log

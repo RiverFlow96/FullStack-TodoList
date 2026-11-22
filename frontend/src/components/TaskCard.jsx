@@ -31,6 +31,8 @@ function TaskCard({ title, description, completed, created_at, id }) {
                 <div className="flex items-center justify-between mb-3">
                     <button
                         type="button"
+                        aria-label={completed ? "Mark task as pending" : "Mark task as complete"}
+                        aria-pressed={completed}
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${completed ? 'bg-violet-600 border-violet-600' : 'border-purple-300 hover:border-violet-400'}`}
                         onClick={(e) => {
                             e.stopPropagation()

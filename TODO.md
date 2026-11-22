@@ -91,6 +91,8 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 ### A-03. Añadir pruebas end-to-end con Playwright
 
+**Estado:** implementación local añadida el 2026-11-22. Tres escenarios Playwright pasan en Chromium: ruta protegida, registro/login y ciclo CRUD de grupos/tareas con búsqueda y filtro por estado, logout y respuesta visible ante API 503. Vitest 30/30, pytest 77/77, Ruff, ESLint, build y `manage.py check` también pasaron. Falta verificar el nuevo job en GitHub Actions tras publicarlo.
+
 **Objetivo:** comprobar los recorridos completos desde un navegador real.
 
 **Trabajo:** configurar Playwright y un entorno aislado de prueba; automatizar registro, login, rutas protegidas, creación/edición/eliminación de tareas, grupos, filtros y logout; incluir al menos un caso de API fallida.
