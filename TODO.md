@@ -13,6 +13,8 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 ### C-01. Publicar y validar una demo funcional
 
+**Estado (2026-11-22):** Render no tiene servicio ni base de datos de este proyecto. Se corrigió y publicó `render.yaml` en `2cfc8b1` (raíz y comandos de build compatibles, migraciones, health check, configuración CORS/CSRF, PostgreSQL vinculado). Render creó el Blueprint `exs-dc188459fdbs73a3e6hg`, pero la planificación no llegó a crear infraestructura: devuelve `need_payment_info`. La única base PostgreSQL gratuita existente pertenece a Fenix y no se reutilizará. Para una base persistente y backend siempre activo, el plan mínimo consultado en Render es aproximadamente US$6/mes para Postgres y US$7/mes para el servicio. Falta añadir método de pago en Render y autorizar la aplicación del plan; luego hay que comprobar la URL, migraciones, CORS y flujos en navegador. Las bases gratuitas de Render vencen a los 30 días ([límites del nivel gratuito](https://render.com/docs/free); [precios](https://render.com/pricing)).
+
 **Objetivo:** ofrecer una URL pública y estable para que un reclutador pruebe la aplicación por navegador.
 
 **Trabajo:** desplegar frontend, backend y PostgreSQL; configurar variables de entorno, HTTPS, dominios permitidos, CORS y CSRF; ejecutar migraciones en el despliegue; comprobar navegación directa en rutas SPA.
