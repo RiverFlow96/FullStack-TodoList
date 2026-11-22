@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { TaskSchema } from "../utils/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTaskStore } from "../store/useStore";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Spinner from "../components/Spinner";
 import toast from "react-hot-toast";
 
@@ -12,7 +12,6 @@ function EditTaskPage() {
 
     const { editTask, loading: storeLoading, tasks, fetchTasks, removeTask } = useTaskStore()
     const [loading, setLoading] = useState(false)
-    const [taskData, setTaskData] = useState(null)
     const [loadingTask, setLoadingTask] = useState(true)
 
     const { id } = useParams()
@@ -27,16 +26,10 @@ function EditTaskPage() {
         loadTask()
     }, [fetchTasks, tasks])
 
-    useEffect(() => {
-        if (id && tasks.length > 0) {
-            const task = tasks.find(t => t.id === parseInt(id))
-            if (task) {
-                setTaskData(task)
-            } else {
-                toast.error("Task not found")
-            }
-        }
-    }, [id, tasks])
+    const taskData = useMemo(
+        () => tasks.find(task => task.id === Number(id)) || null,
+        [id, tasks]
+    )
 
     const { register, handleSubmit, reset, formState: { errors } } = useForm({
         resolver: zodResolver(TaskSchema)

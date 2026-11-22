@@ -191,7 +191,7 @@ export const suggestTaskWithAI = async ({ prompt, context }) => {
         return response.data
     } catch (error) {
         const detail = error?.response?.data?.detail
-        throw new Error(detail || "No se pudo generar la sugerencia con IA")
+        throw new Error(detail || "No se pudo generar la sugerencia con IA", { cause: error })
     }
 }
 
