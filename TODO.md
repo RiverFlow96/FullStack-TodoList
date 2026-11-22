@@ -55,7 +55,7 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 **Aceptación:** ejecución verde en GitHub Actions desde `main` y en un pull request; pytest, Vitest, Ruff, lint, build y `manage.py check` aparecen como controles requeridos; CodeQL completa análisis sin errores operativos.
 
-**Estado:** en `18f9599`, CI y CodeQL completaron correctamente en `main` (22 de noviembre de 2026). La integración GitHub no permite consultar protección de ramas (HTTP 403) y no hay una ejecución reciente de PR con el workflow actual; falta confirmar ambos puntos antes de cerrar la tarea.
+**Estado:** CI y CodeQL completaron correctamente en `main` para `18f9599` y `fb25555` (22 de noviembre de 2026). La integración GitHub no permite consultar protección de ramas (HTTP 403) y no hay una ejecución reciente de PR con el workflow actual; falta confirmar ambos puntos antes de cerrar la tarea.
 
 ### C-06. Mantener pruebas y cobertura basadas en resultados reales
 
@@ -65,7 +65,7 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 **Aceptación:** ambos conjuntos pasan desde checkout limpio; reportes descargables muestran fecha/commit; README describe claramente que el 55 % backend es global y que el porcentaje frontend corresponde solo a archivos importados por pruebas.
 
-**Estado:** el workflow ahora genera cobertura V8 para frontend y XML/HTML para backend, e incluye SHA en los nombres de artefactos. Verificación local del 2026-11-22: pytest 77/77 con 55 % global; Vitest 30/30 con 93.33 % de instrucciones, 90.24 % de ramas, 80 % de funciones y 92.1 % de líneas en los archivos importados por las pruebas. Falta confirmar la descarga de artefactos de una ejecución de GitHub Actions.
+**Estado:** completado el 2026-11-22. CI pasó en [fb25555](https://github.com/RiverFlow96/FullStack-TodoList/actions/runs/44989126291) y publicó `backend-coverage-fb25555115ae209f407c8abf9084ce033cebec93` (XML y HTML) y `frontend-coverage-fb25555115ae209f407c8abf9084ce033cebec93` (HTML y LCOV); ambos artefactos aparecen disponibles en GitHub. La suite local pasó pytest 77/77 con 55 % global y Vitest 30/30 con 93.33 % de instrucciones, 90.24 % de ramas, 80 % de funciones y 92.1 % de líneas en los archivos importados por las pruebas. Se retiraron del repositorio los reportes generados versionados y se ignora `backend/coverage.xml`.
 
 ## Alta prioridad
 
