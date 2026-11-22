@@ -3,17 +3,19 @@ import { createTask, fetchTasks, updateTask, deleteTask, fetchGroups, createGrou
 import { login as apiLogin, logout as apiLogout, register as apiRegister } from "../api/axios";
 
 export const useAuthStore = create((set) => ({
-    user: null,
-    email: null,
+    user: localStorage.getItem("username")
+        ? { username: localStorage.getItem("username"), email: localStorage.getItem("email") }
+        : null,
+    email: localStorage.getItem("email"),
     isLoggedIn: !!localStorage.getItem("access_token"),
     token: localStorage.getItem("access_token"),
     error: null,
     login: async (username, password) => {
         try {
             const data = await apiLogin(username, password)
-            const userData = { username }
             set({
-                user: userData,
+                user: data.user,
+                email: data.user.email,
                 isLoggedIn: true,
                 token: data.access,
                 error: null
@@ -23,6 +25,7 @@ export const useAuthStore = create((set) => ({
             const errorMessage = err?.message || "Usuario y contrasenia incorrectos"
             set({
                 user: null,
+                email: null,
                 isLoggedIn: false,
                 token: null,
                 error: errorMessage
@@ -35,6 +38,7 @@ export const useAuthStore = create((set) => ({
         localStorage.removeItem("user")
         set({
             user: null,
+            email: null,
             isLoggedIn: false,
             token: null,
             error: null

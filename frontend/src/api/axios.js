@@ -101,8 +101,11 @@ api.interceptors.response.use(
                     { timeout: 10000 }
                 )
 
-                const { access } = response.data
+                const { access, refresh } = response.data
                 localStorage.setItem('access_token', access)
+                if (refresh) {
+                    localStorage.setItem('refresh_token', refresh)
+                }
 
                 // Actualizar header de la petición original
                 originalRequest.headers.Authorization = `Bearer ${access}`
@@ -201,21 +204,16 @@ export const register = async (userData) => {
 //TODO Guardar username en storage para mostrar usuario en profile
 export const login = async (username, password) => {
     try {
-        console.log("Attempting login to:", API_URL + "token/")
-        const response = await publicApi.post('token/', { username, password })
-        if (response.data.access) {
-            localStorage.setItem('access_token', response.data.access)
-            localStorage.setItem('refresh_token', response.data.refresh)
-        }
+        const tokenResponse = await publicApi.post('token/', { username, password })
+        localStorage.setItem('access_token', tokenResponse.data.access)
+        localStorage.setItem('refresh_token', tokenResponse.data.refresh)
         const userResponse = await api.get('users/me/')
-        if (userResponse.data) {
-            localStorage.setItem('username', userResponse.data.username)
-            localStorage.setItem('email', userResponse.data.email)
-        }
-        console.log("Login successful")
-        return true
+        const user = userResponse.data
+        localStorage.setItem('username', user.username)
+        localStorage.setItem('email', user.email)
+        return { access: tokenResponse.data.access, refresh: tokenResponse.data.refresh, user }
     } catch (error) {
-        console.error('Error login: ', error)
+        logout()
         throw error
     }
 }
