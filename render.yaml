@@ -1,10 +1,20 @@
+databases:
+  - name: fullstack-todolist-postgres
+    databaseName: fullstack_todolist
+    user: todolist
+    plan: 0.1c-256mb
+    region: virginia
+
 services:
   - type: web
     name: fullstack-todolist-backend
     env: python
-    rootDir: backend
-    buildCommand: ./scripts/build_backend.sh
-    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    plan: free
+    region: virginia
+    rootDir: .
+    buildCommand: pip install -e ".[prod]" && python backend/manage.py collectstatic --noinput && python backend/manage.py migrate --noinput
+    startCommand: cd backend && gunicorn config.wsgi:application --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/docs/
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: config.settings.production
@@ -15,21 +25,21 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
-        sync: false
+        fromDatabase:
+          name: fullstack-todolist-postgres
+          property: connectionString
       - key: ALLOWED_HOSTS
         value: fullstack-todolist-backend.onrender.com
       - key: CORS_ALLOWED_ORIGINS
-        sync: false
+        value: https://fullstack-todolist.pages.dev
       - key: CSRF_TRUSTED_ORIGINS
-        sync: false
+        value: https://fullstack-todolist.pages.dev
       - key: LLM_PROVIDER
         value: openrouter
-      - key: OPENROUTER_API_KEY
-        sync: false
       - key: OPENROUTER_MODEL
         value: minimax/minimax-m2.5:free
       - key: OPENROUTER_SITE_URL
-        value: http://localhost:8000
+        value: https://fullstack-todolist.pages.dev
       - key: OPENROUTER_APP_NAME
         value: FullStack TodoList
       - key: LLM_TIMEOUT_SECONDS
