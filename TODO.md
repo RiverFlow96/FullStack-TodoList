@@ -57,7 +57,7 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 **Aceptación:** ejecución verde en GitHub Actions desde `main` y en un pull request; pytest, Vitest, Ruff, lint, build y `manage.py check` aparecen como controles requeridos; CodeQL completa análisis sin errores operativos.
 
-**Estado:** CI y CodeQL completaron correctamente en `main` para `18f9599` y `fb25555` (22 de noviembre de 2026). La integración GitHub no permite consultar protección de ramas (HTTP 403) y no hay una ejecución reciente de PR con el workflow actual; falta confirmar ambos puntos antes de cerrar la tarea.
+**Estado:** CI y CodeQL completaron correctamente en `main` para `18f9599` y `fb25555` (22 de noviembre de 2026). El CI actualizado, incluido el job E2E, también pasó en [`2e2f506`](https://github.com/RiverFlow96/FullStack-TodoList/actions/runs/44991588752). La integración GitHub no permite consultar protección de ramas (HTTP 403) y no hay una ejecución reciente de PR con el workflow actual; falta confirmar ambos puntos antes de cerrar la tarea.
 
 ### C-06. Mantener pruebas y cobertura basadas en resultados reales
 
@@ -93,7 +93,7 @@ Lista operativa para preparar FullStack TodoList como una demo de portafolio fia
 
 ### A-03. Añadir pruebas end-to-end con Playwright
 
-**Estado:** implementación local añadida el 2026-11-22. Tres escenarios Playwright pasan en Chromium: ruta protegida, registro/login y ciclo CRUD de grupos/tareas con búsqueda y filtro por estado, logout y respuesta visible ante API 503. Vitest 30/30, pytest 77/77, Ruff, ESLint, build y `manage.py check` también pasaron. Falta verificar el nuevo job en GitHub Actions tras publicarlo.
+**Estado:** completado el 2026-11-22. Tres escenarios Playwright pasan en Chromium: ruta protegida, registro/login y ciclo CRUD de grupos/tareas con búsqueda y filtro por estado, logout y respuesta visible ante API 503. El job E2E pasó en [CI de `2e2f506`](https://github.com/RiverFlow96/FullStack-TodoList/actions/runs/44991588752). Vitest 30/30, pytest 77/77, Ruff, ESLint, build y `manage.py check` también pasaron localmente.
 
 **Objetivo:** comprobar los recorridos completos desde un navegador real.
 
