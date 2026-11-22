@@ -86,7 +86,7 @@ export const useTaskStore = create((set, get) => ({
             set({ groups, activeGroup })
         } catch (err) {
             console.error('Error fetching groups:', err)
-            set({ groups: [], activeGroup: null })
+            set({ error: err.message })
         }
     },
 
@@ -97,6 +97,7 @@ export const useTaskStore = create((set, get) => ({
             return newGroup
         } catch (err) {
             console.error('Error creating group:', err)
+            throw err
         }
     },
 
@@ -106,6 +107,7 @@ export const useTaskStore = create((set, get) => ({
             set({ groups: get().groups.map(g => g.id === groupId ? updated : g) })
         } catch (err) {
             console.error('Error updating group:', err)
+            throw err
         }
     },
 
@@ -122,6 +124,7 @@ export const useTaskStore = create((set, get) => ({
             }
         } catch (err) {
             console.error('Error deleting group:', err)
+            throw err
         }
     },
 
@@ -135,6 +138,7 @@ export const useTaskStore = create((set, get) => ({
             set({ groups: reordered })
         } catch (err) {
             console.error('Error reordering groups:', err)
+            throw err
         }
     },
 
@@ -152,6 +156,7 @@ export const useTaskStore = create((set, get) => ({
             set({ tasks, loading: false })
         } catch (err) {
             set({ error: err.message, loading: false })
+            throw err
         }
     },
 
@@ -164,7 +169,7 @@ export const useTaskStore = create((set, get) => ({
             return true
         } catch (err) {
             set({ error: err.message, loading: false })
-            return false
+            throw err
         }
     },
 
@@ -175,6 +180,7 @@ export const useTaskStore = create((set, get) => ({
             console.log("Created task")
         } catch (err) {
             console.error("Error updating task:", err)
+            throw err
         }
     },
 
@@ -188,6 +194,7 @@ export const useTaskStore = create((set, get) => ({
             })
         } catch (err) {
             set({ error: err.message, loading: false })
+            throw err
         }
     }
 }))

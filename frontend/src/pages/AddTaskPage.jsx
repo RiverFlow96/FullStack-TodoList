@@ -34,23 +34,16 @@ function AddTaskPage() {
     const navigate = useNavigate()
 
     const onSubmit = async (data) => {
-        console.log("Submit triggered with data:", data)
         setLoading(true)
         try {
-            const success = await addTask({ title: data.title, description: data.description, completed: false })
-            console.log("Success:", success)
-            setLoading(false)
-            if (success) {
-                toast.success("Task created successfully!")
-                reset()
-                navigate("/home")
-            } else {
-                console.error("Failed to create task")
-            }
+            await addTask({ title: data.title, description: data.description, completed: false })
+            toast.success("Task created successfully!")
+            reset()
+            navigate("/home")
         } catch (error) {
-            console.error("Error:", error)
+            toast.error(error.response?.data?.detail || "Could not create task. Please try again.")
+        } finally {
             setLoading(false)
-            console.error("Error creating task")
         }
     }
 

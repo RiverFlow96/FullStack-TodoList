@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { useTaskStore } from "../store/useStore"
 import { PlusIcon, PencilIcon, CheckIcon, X } from "lucide-react"
+import toast from "react-hot-toast"
 
 function getTextColor(bgColor) {
     if (!bgColor) return "text-white"
@@ -38,15 +39,23 @@ export default function TaskGroupTabs() {
 
     const handleCreateGroup = async () => {
         if (!newGroupName.trim()) return
-        await addGroup({ name: newGroupName, color: newGroupColor })
-        setNewGroupName("")
-        setNewGroupColor("#6366f1")
-        setIsCreating(false)
+        try {
+            await addGroup({ name: newGroupName, color: newGroupColor })
+            setNewGroupName("")
+            setNewGroupColor("#6366f1")
+            setIsCreating(false)
+        } catch (error) {
+            toast.error(error.response?.data?.detail || "Could not create group. Please try again.")
+        }
     }
 
     const handleSelectGroup = async (groupId) => {
         setActiveGroup(groupId)
-        await fetchTasks()
+        try {
+            await fetchTasks()
+        } catch {
+            toast.error("Could not load tasks. Please try again.")
+        }
     }
 
     const handleEditStart = (group) => {
@@ -57,21 +66,33 @@ export default function TaskGroupTabs() {
 
     const handleEditSave = async () => {
         if (!editName.trim() || !editingId) return
-        await editGroup({ name: editName, color: editColor }, editingId)
-        setEditingId(null)
+        try {
+            await editGroup({ name: editName, color: editColor }, editingId)
+            setEditingId(null)
+        } catch (error) {
+            toast.error(error.response?.data?.detail || "Could not update group. Please try again.")
+        }
     }
 
     const handleDeleteGroup = async (groupId) => {
         if (window.confirm("¿Eliminar este grupo? Las tareas se moverán a sin grupo.")) {
-            await removeGroup(groupId)
-            await fetchTasks()
+            try {
+                await removeGroup(groupId)
+                await fetchTasks()
+            } catch (error) {
+                toast.error(error.response?.data?.detail || "Could not delete group or load tasks.")
+            }
         }
     }
 
     const handleAllTasks = async () => {
         setActiveGroup(null)
         localStorage.removeItem('last_active_group')
-        await fetchTasks()
+        try {
+            await fetchTasks()
+        } catch {
+            toast.error("Could not load tasks. Please try again.")
+        }
     }
 
     if (groups.length === 0 && !isCreating) {

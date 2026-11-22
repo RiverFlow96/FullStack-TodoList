@@ -17,8 +17,12 @@ function TaskCard({ title, description, completed, created_at, id }) {
         const confirmDelete = window.confirm("Are you sure you want to delete this task?")
         if (!confirmDelete) return
 
-        await removeTask(id)
-        toast.success("Task deleted")
+        try {
+            await removeTask(id)
+            toast.success("Task deleted")
+        } catch (error) {
+            toast.error(error.response?.data?.detail || "Could not delete task. Please try again.")
+        }
     }
 
     return (
@@ -30,7 +34,9 @@ function TaskCard({ title, description, completed, created_at, id }) {
                         className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${completed ? 'bg-violet-600 border-violet-600' : 'border-purple-300 hover:border-violet-400'}`}
                         onClick={(e) => {
                             e.stopPropagation()
-                            editTask({ completed: !completed }, id)
+                            editTask({ completed: !completed }, id).catch((error) => {
+                                toast.error(error.response?.data?.detail || "Could not update task. Please try again.")
+                            })
                         }}
                     >
                         {completed && <CheckCircle2 className="w-4 h-4 text-white" />}

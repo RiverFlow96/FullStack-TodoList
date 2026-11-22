@@ -127,49 +127,33 @@ api.interceptors.response.use(
 )
 
 export const fetchTasks = async () => {
-    try {
-        const response = await api.get('tasks/')
-        return response.data || []
-    } catch (error) {
-        console.error('Error fetching tasks: ', error)
-        return []
-    }
+    const response = await api.get('tasks/')
+    return response.data
 }
 
 export const fetchTask = async (id) => {
-    try {
-        const response = await api.get(`tasks/${id}/`)
-        return response.data
-    } catch (error) {
-        console.error('Error fetching tasks: ', error)
-    }
+    const response = await api.get(`tasks/${id}/`)
+    return response.data
 }
 
 export const createTask = async (taskData, groupId = null) => {
-    try {
-        const response = await api.post('tasks/', {
-            title: taskData.title,
-            description: taskData.description,
-            completed: false,
-            group: groupId
-        })
-        return response.data
-    } catch (error) {
-        console.error("Error creating tasks: ", error)
-    }
+    const response = await api.post('tasks/', {
+        title: taskData.title,
+        description: taskData.description,
+        completed: false,
+        group: groupId
+    })
+    return response.data
 }
 
 export const updateTask = async (taskData, taskId) => {
-    try {
-        const response = await api.patch(`tasks/${taskId}/`, {
-            title: taskData.title,
-            description: taskData.description,
-            completed: taskData.completed
-        })
-        return response.data
-    } catch (error) {
-        console.error("Error updating task: ", error)
-    }
+    const response = await api.patch(`tasks/${taskId}/`, {
+        ...taskData,
+        title: taskData.title,
+        description: taskData.description,
+        completed: taskData.completed
+    })
+    return response.data
 }
 
 export const deleteTask = async (taskId) => {
@@ -245,37 +229,24 @@ export const logout = () => {
 };
 
 export const fetchGroups = async () => {
-    try {
-        const response = await api.get('groups/')
-        return response.data || []
-    } catch (error) {
-        console.error('Error fetching groups: ', error)
-        return []
-    }
+    const response = await api.get('groups/')
+    return response.data
 }
 
 export const createGroup = async (groupData) => {
-    try {
-        const response = await api.post('groups/', {
-            name: groupData.name,
-            color: groupData.color || null
-        })
-        return response.data
-    } catch (error) {
-        console.error("Error creating group: ", error)
-    }
+    const response = await api.post('groups/', {
+        name: groupData.name,
+        color: groupData.color || null
+    })
+    return response.data
 }
 
 export const updateGroup = async (groupData, groupId) => {
-    try {
-        const response = await api.patch(`groups/${groupId}/`, {
-            name: groupData.name,
-            color: groupData.color || null
-        })
-        return response.data
-    } catch (error) {
-        console.error("Error updating group: ", error)
-    }
+    const response = await api.patch(`groups/${groupId}/`, {
+        name: groupData.name,
+        color: groupData.color || null
+    })
+    return response.data
 }
 
 export const deleteGroup = async (groupId) => {
@@ -289,10 +260,6 @@ export const deleteGroup = async (groupId) => {
 }
 
 export const reorderGroups = async (groupIds) => {
-    try {
-        const response = await api.patch('groups/reorder/', { group_ids: groupIds })
-        return response.data
-    } catch (error) {
-        console.error('Error reordering groups: ', error)
-    }
+    const response = await api.patch('groups/reorder/', { group_ids: groupIds })
+    return response.data
 }

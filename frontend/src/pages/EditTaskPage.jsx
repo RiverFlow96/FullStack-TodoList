@@ -57,8 +57,7 @@ function EditTaskPage() {
             toast.success("Task updated successfully!")
             navigate("/home")
         } catch (error) {
-            console.error("Error:", error)
-            toast.error("Error updating task")
+            toast.error(error.response?.data?.detail || "Could not update task. Please try again.")
         } finally {
             setLoading(false)
         }
@@ -75,9 +74,13 @@ function EditTaskPage() {
     const deleteTask = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete this task?")
         if (confirmDelete) {
-            await removeTask(parseInt(id))
-            toast.success("Task deleted successfully!")
-            navigate("/home")
+            try {
+                await removeTask(parseInt(id))
+                toast.success("Task deleted successfully!")
+                navigate("/home")
+            } catch (error) {
+                toast.error(error.response?.data?.detail || "Could not delete task. Please try again.")
+            }
         }
     }
     return (
